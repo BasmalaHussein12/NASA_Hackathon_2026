@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASA TL-TDE | Terrestrial-Lunar Topological Discovery Engine</title>
+  <meta name="description" content="Discovering Terrestrial Planetary Analogs on Earth matching Moon and Mars Landing Sites using NASA Earth Data and Lunar Orbiter Datasets.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= TOP MISSION HEADER ================= -->
+  <header class="header-bar">
+    <div class="brand-section">
+      <div class="nasa-logo-badge">NASA SPACE APPS</div>
+      <div class="brand-title">
+        <h1>TL-TDE &bull; Planetary Analog Discovery Engine</h1>
+        <div class="subtitle">TERRESTRIAL-LUNAR TOPOLOGICAL MATCHING &bull; NASA SPACE APPS 2026</div>
+      </div>
+    </div>
+
+    <div class="header-stats">
+      <div class="stat-pill gold">
+        <span class="label">Egypt Discoveries</span>
+        <span class="val">3 Sites</span>
+      </div>
+      <div class="stat-pill">
+        <span class="label">Raw EDM Scanned</span>
+        <span class="val">8 Blocks</span>
+      </div>
+      <div class="stat-pill">
+        <span class="label">NASA Benchmarks</span>
+        <span class="val">3 Ground Truth</span>
+      </div>
+      <div class="stat-pill">
+        <span class="label">Total Unique Sites</span>
+        <span class="val">14 Analogs</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN WORKSPACE ================= -->
+  <main class="main-layout">
+    
+    <!-- LEFT SIDEBAR: MISSION CONTROLS & RANKING -->
+    <aside class="sidebar-panel">
+      <div class="sidebar-scroll-area">
+        
+        <!-- PLANETARY TARGET SELECTOR -->
+        <div class="control-box">
+          <div class="box-header">
+            <span class="box-title">🪐 1. Target Celestial Body</span>
+          </div>
+          
+          <div class="planet-selector-grid">
+            <button class="planet-btn active" id="planetMoonBtn">🌕 Moon (LOLA EDM)</button>
+            <button class="planet-btn" id="planetMarsBtn">🔴 Mars (MOLA EDM)</button>
+          </div>
+
+          <div class="target-dropdown-group">
+            <label for="targetSelect">Select Planetary Landing Candidate Site:</label>
+            <select id="targetSelect" class="styled-select"></select>
+          </div>
+
+          <!-- Target Preview Card -->
+          <div class="target-preview-card">
+            <div class="target-preview-title" id="targetPreviewTitle">Target Title</div>
+            <div class="target-preview-desc" id="targetPreviewDesc">Target Description</div>
+            <div class="target-metrics-mini" id="targetPreviewMetrics"></div>
+          </div>
+        </div>
+
+        <!-- FEATURE PRIORITY SLIDERS -->
+        <div class="control-box">
+          <div class="box-header">
+            <span class="box-title">⚙️ 2. Feature Priority Weights</span>
+            <button class="reset-weights-btn" id="resetWeightsBtn">Reset Default</button>
+          </div>
+
+          <div class="slider-group">
+            <!-- Slope Slider -->
+            <div class="slider-item">
+              <div class="slider-label-row">
+                <span class="slider-name">📐 Surface Slope Match (الميل)</span>
+                <span class="slider-val-badge" id="valSlope">25%</span>
+              </div>
+              <input type="range" class="custom-range" id="weightSlope" min="0" max="100" value="25">
+            </div>
+
+            <!-- Roughness Slider -->
+            <div class="slider-item">
+              <div class="slider-label-row">
+                <span class="slider-name">⛰️ Roughness Match (الوعورة)</span>
+                <span class="slider-val-badge" id="valRoughness">25%</span>
+              </div>
+              <input type="range" class="custom-range" id="weightRoughness" min="0" max="100" value="25">
+            </div>
+
+            <!-- Relief Slider -->
+            <div class="slider-item">
+              <div class="slider-label-row">
+                <span class="slider-name">🏔️ Local Relief Match (التضاريس)</span>
+                <span class="slider-val-badge" id="valRelief">25%</span>
+              </div>
+              <input type="range" class="custom-range" id="weightRelief" min="0" max="100" value="25">
+            </div>
+
+            <!-- Subsurface Cave Slider -->
+            <div class="slider-item">
+              <div class="slider-label-row">
+                <span class="slider-name">🕳️ Caves & Lava Tubes (الكهوف وأنابيب الحمم)</span>
+                <span class="slider-val-badge" id="valCave">15%</span>
+              </div>
+              <input type="range" class="custom-range" id="weightCave" min="0" max="100" value="15">
+            </div>
+
+            <!-- Solar Illumination Slider -->
+            <div class="slider-item">
+              <div class="slider-label-row">
+                <span class="slider-name">☀️ Solar Exposure Match (الإضاءة)</span>
+                <span class="slider-val-badge" id="valSolar">10%</span>
+              </div>
+              <input type="range" class="custom-range" id="weightSolar" min="0" max="100" value="10">
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH & QUICK FILTERS -->
+        <div class="control-box">
+          <div class="box-header">
+            <span class="box-title">🔍 3. Filter & Explore Analogs</span>
+          </div>
+
+          <div class="search-input-wrap">
+            <span class="search-icon">🔎</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by site name, country, or geology...">
+          </div>
+
+          <div class="filter-pills-row">
+            <button class="filter-pill active" data-filter="ALL">All Sites (14)</button>
+            <button class="filter-pill gold" data-filter="EGYPT">🇪🇬 Egypt (3)</button>
+            <button class="filter-pill" data-filter="EDM">🛰️ New EDM Scans (8)</button>
+            <button class="filter-pill" data-filter="BENCHMARK">🏛️ NASA Benchmarks (3)</button>
+            <button class="filter-pill" data-filter="CAVE">🕳️ Caves/Lava Tubes</button>
+            <button class="filter-pill" data-filter="SAFE">🛬 Safe Landing Cat 1</button>
+          </div>
+
+          <!-- Dynamic Ranking List -->
+          <div class="results-header-row">
+            <span class="results-count" id="resultsCount">14 Analogs Ranked</span>
+            <span>Sorted by Dynamic PTSI</span>
+          </div>
+
+          <div class="analogs-list" id="analogsList">
+            <!-- Dynamic analog cards injected via app.js -->
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- RIGHT PANE: INTERACTIVE SATELLITE MAP -->
+    <section class="map-panel">
+      <div id="leafletMap"></div>
+
+      <!-- Floating Map Overlays -->
+      <div class="map-floating-overlay">
+        <!-- Basemap Switcher -->
+        <div class="basemap-toggle-box">
+          <button class="basemap-btn active" data-basemap="satellite">🛰️ Satellite</button>
+          <button class="basemap-btn" data-basemap="osm">🗺️ Street</button>
+          <button class="basemap-btn" data-basemap="topo">🏔️ Topo</button>
+        </div>
+
+        <!-- Map Legend -->
+        <div class="map-legend-box">
+          <div class="legend-item">
+            <span class="legend-dot gold"></span>
+            <span>Egypt Discovery (New)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot cyan"></span>
+            <span>Raw EDM Discovery (10x10 km)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot purple"></span>
+            <span>NASA/ESA Benchmark</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= SCIENTIFIC MISSION DOSSIER MODAL ================= -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-dialog">
+      
+      <div class="modal-header">
+        <div class="modal-title">
+          <h2 id="modalTitle">Site Dossier</h2>
+          <div class="modal-subtitle" id="modalSubtitle">Subsurface Planetary Analog</div>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Topometric Comparison Section -->
+        <div class="dossier-section">
+          <div class="dossier-section-title">📊 Topometric Geomorphology Comparison (Earth vs Target)</div>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Topographic Metric</th>
+                <th>Terrestrial Value (Earth)</th>
+                <th>Target Value (Moon / Mars)</th>
+                <th>Component Match Score</th>
+              </tr>
+            </thead>
+            <tbody id="modalTargetComparisonTable">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Grid of Operational Suitability and Justification -->
+        <div class="dossier-grid">
+          <div class="dossier-section">
+            <div class="dossier-section-title">🚀 Operational Suitability & Geology</div>
+            <div id="modalOperationalBody">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="dossier-section">
+            <div class="dossier-section-title">🔬 NASA Scientific Justification</div>
+            <p id="modalScientificJustification" style="font-size: 0.78rem; line-height: 1.45; color: #cbd5e1;">
+              <!-- Dynamically populated -->
+            </p>
+          </div>
+        </div>
+
+        <!-- Environmental Caveats Warning Box -->
+        <div class="caveat-box" id="modalEnvironmentalCaveats">
+          <!-- Dynamically populated -->
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary-btn" id="modalCopyCoordsBtn">📋 Copy Lat/Lon Coordinates</button>
+        <button class="primary-btn" id="modalFlyMapBtn">🛰️ Center Satellite View</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Catalog Data (Zero-CORS, synchronous load) -->
+  <script src="data.js"></script>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+
+</body>
+</html>
