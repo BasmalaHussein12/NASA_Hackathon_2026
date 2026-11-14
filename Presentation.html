@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SpaceMirror TL-TDE: Design Deliverables &amp; Strategic Impact</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+body { font-family: 'Inter', Arial, sans-serif; color: #EAF2FF; }
+
+.dark, .mid, .accent {
+  counter-increment: page;
+  display: flex;
+  flex-direction: column;
+  padding: 128px 128px 160px;
+  font-family: 'Inter', Arial, sans-serif;
+  color: #EAF2FF;
+}
+.dark { background: #040B1A; }
+.mid { background: #0A1730; }
+.accent { background: #1D4ED8; }
+.cover { background: linear-gradient(100deg, #040B1A 45%, #0A2459 100%); justify-content: center; }
+
+h1, h2, h3 { font-family: 'Space Grotesk', 'Inter', Arial, sans-serif; }
+
+.eyebrow { font-size: 24px; letter-spacing: 4px; font-weight: 600; color: #60A5FA; margin-bottom: 28px; }
+.eblt { font-size: 24px; letter-spacing: 4px; font-weight: 600; color: #DBEAFE; margin-bottom: 28px; }
+.t { font-size: 64px; line-height: 1.12; font-weight: 600; color: #F4F8FF; }
+.tbig { font-size: 84px; line-height: 1.1; font-weight: 600; color: #F4F8FF; width: 1500px; }
+.hero { font-size: 112px; line-height: 1.05; font-weight: 700; color: #F4F8FF; width: 860px; }
+.sub { font-size: 48px; line-height: 1.25; font-weight: 600; color: #60A5FA; width: 860px; margin-top: 20px; font-family: 'Space Grotesk', 'Inter', Arial, sans-serif; }
+.lead { font-size: 32px; line-height: 1.5; color: #A9C3E8; width: 800px; margin-top: 36px; }
+.leadlt { font-size: 36px; line-height: 1.5; color: #DBEAFE; width: 1300px; margin-top: 44px; }
+.leadwide { font-size: 32px; line-height: 1.5; color: #A9C3E8; margin-top: 48px; }
+
+.cards { display: flex; gap: 32px; margin-top: 56px; }
+.card { flex: 1; background: #0F2347; border: 1px solid #1E3A6B; border-radius: 20px; padding: 40px 36px; }
+.card h3 { font-size: 34px; line-height: 1.2; font-weight: 600; color: #F4F8FF; margin-bottom: 18px; }
+.ct { font-size: 28px; line-height: 1.5; color: #B9CFEF; }
+.cs { font-size: 26px; line-height: 1.5; color: #B9CFEF; }
+.step { font-size: 96px; line-height: 1; font-weight: 700; color: #60A5FA; font-family: 'Space Grotesk', 'Inter', Arial, sans-serif; margin-bottom: 20px; }
+.csl { font-size: 26px; line-height: 1.55; color: #B9CFEF; padding-left: 28px; }
+
+.split { display: flex; gap: 96px; margin-top: 56px; align-items: flex-start; }
+.list { font-size: 32px; line-height: 1.9; color: #CFE0FA; padding-left: 40px; width: 700px; flex: none; }
+
+.panel { flex: 1; background: #0F2347; border: 1px solid #1E3A6B; border-radius: 24px; padding: 40px 44px; display: flex; flex-direction: column; gap: 22px; }
+.tags { display: flex; gap: 24px; align-items: center; }
+.pill { background: #1D4ED8; color: #F4F8FF; font-size: 24px; font-weight: 600; letter-spacing: 2px; padding: 10px 22px; border-radius: 999px; }
+.tagtxt { font-size: 24px; color: #A9C3E8; }
+.big { display: flex; gap: 28px; align-items: center; }
+.lbl { font-size: 28px; color: #A9C3E8; width: 190px; }
+.pct { font-size: 88px; line-height: 1; font-weight: 700; color: #F4F8FF; font-family: 'Space Grotesk', 'Inter', Arial, sans-serif; }
+.row { display: flex; gap: 24px; align-items: center; }
+.rl { font-size: 28px; color: #CFE0FA; width: 190px; flex: none; }
+.track { width: 400px; height: 14px; border-radius: 7px; background: #1E3A6B; overflow: hidden; flex: none; }
+.fill { height: 14px; background: #60A5FA; }
+.rv { font-size: 28px; font-weight: 600; color: #F4F8FF; width: 100px; text-align: right; }
+.warn { display: flex; gap: 20px; align-items: center; margin-top: 6px; }
+.wt { font-size: 26px; line-height: 1.4; color: #CFE0FA; }
+
+.flow { display: flex; gap: 24px; margin-top: 56px; align-items: stretch; }
+.flow .card { padding: 32px; }
+.arrow { flex: none; align-self: center; }
+
+.fmla { font-size: 32px; line-height: 1.3; font-weight: 600; color: #F4F8FF; font-family: 'Space Grotesk', 'Inter', Arial, sans-serif; }
+.flab { font-size: 24px; letter-spacing: 3px; font-weight: 600; color: #60A5FA; }
+.fsp { height: 8px; }
+
+.steps { display: flex; flex-direction: column; gap: 24px; margin-top: 48px; width: 860px; }
+.srow { display: flex; gap: 28px; align-items: flex-start; }
+.bn { font-size: 44px; line-height: 1; font-weight: 700; color: #60A5FA; width: 48px; flex: none; font-family: 'Space Grotesk', 'Inter', Arial, sans-serif; }
+.srow h3 { font-size: 32px; line-height: 1.2; font-weight: 600; color: #F4F8FF; margin-bottom: 6px; }
+.cap { font-size: 24px; line-height: 1.5; color: #A9C3E8; text-align: center; }
+
+.fl { position: absolute; left: 128px; bottom: 64px; width: 1000px; font-size: 24px; color: #6F8FBF; }
+.pg { position: absolute; left: 1592px; bottom: 64px; width: 200px; font-size: 24px; color: #6F8FBF; text-align: right; }
+.pg::after { content: counter(page); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+.a { animation: rise 0.7s ease-out both; animation-delay: calc(var(--i) * 140ms); }
+
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+p,h1,h2,h3,ul,ol{margin:0}
+.card,.panel,.track,.list,.csl{box-sizing:content-box}
+#deck{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;overflow:hidden;background:#040B1A}
+#deck>section{position:absolute;left:0;top:0;width:1920px;height:1080px;opacity:0;visibility:hidden;
+  transition:opacity .7s ease,transform .7s ease,visibility 0s linear .7s}
+#deck>section.active{opacity:1;visibility:visible;transform:none;transition:opacity .7s ease,transform .7s ease,visibility 0s}
+#deck>section.before{transform:translateX(-140px)}
+#deck>section.after{transform:translateX(140px)}
+#deck>section:not(.active) .a{animation:none;opacity:0}
+#deck iframe{position:absolute}
+.dots{position:fixed;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:10px;z-index:5}
+.dots i{width:9px;height:9px;border-radius:50%;background:#1E3A6B;cursor:pointer;transition:background .3s}
+.dots i.on{background:#60A5FA}
+
+</style></head><body>
+<div id="deck">
+<section id="cover" class="dark cover">
+<iframe style="position:absolute;left:992px;top:140px;width:800px;height:800px;border:0;background:transparent;pointer-events:none" sandbox="allow-scripts" scrolling="no" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;body style=&#x27;margin:0;background:transparent&#x27;&gt;
+&lt;style&gt;html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block}&lt;/style&gt;
+&lt;canvas id=&quot;c&quot; width=&quot;800&quot; height=&quot;800&quot;&gt;&lt;/canvas&gt;
+&lt;script&gt;
+(function(){var c=document.getElementById(&#x27;c&#x27;),x=c.getContext(&#x27;2d&#x27;),W=800,R=250,cx=400,cy=400,T=.42,rot=1.2,t=0;
+var S=[[-24.5,-69.2],[35.0,-116.0],[36.2,-116.8],[75.4,-89.7]];
+function P(X,Y,Z){var y=Y*Math.cos(T)-Z*Math.sin(T),z=Y*Math.sin(T)+Z*Math.cos(T);return[cx+R*X,cy-R*y,z]}
+function G(a,b,r){a*=Math.PI/180;b=b*Math.PI/180+rot;return P(r*Math.cos(a)*Math.sin(b),r*Math.sin(a),r*Math.cos(a)*Math.cos(b))}
+function O(a){var X=1.5*Math.cos(a),Z=1.5*Math.sin(a),B=-.42;return P(X*Math.cos(B),X*Math.sin(B),Z)}
+function seg(f,n,col){x.beginPath();var on=0;for(var i=0;i&lt;n;i++){var p=f(i);if(p[2]&gt;0){on?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]);on=1}else on=0}x.strokeStyle=col;x.stroke()}
+function orb(front){x.beginPath();var on=0;for(var i=0;i&lt;=120;i++){var p=O(i/120*6.2832);if((p[2]&gt;0)==front){on?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]);on=1}else on=0}x.strokeStyle=&#x27;rgba(96,165,250,.6)&#x27;;x.lineWidth=2;x.stroke()}
+function sat(front){var p=O(t*.018);if((p[2]&gt;0)!=front)return;x.fillStyle=&#x27;rgba(147,197,253,.35)&#x27;;x.beginPath();x.arc(p[0],p[1],14,0,7);x.fill();x.fillStyle=&#x27;#DBEAFE&#x27;;x.beginPath();x.arc(p[0],p[1],6,0,7);x.fill()}
+function draw(){x.clearRect(0,0,W,W);
+var g=x.createRadialGradient(cx,cy,R*.9,cx,cy,R*1.35);g.addColorStop(0,&#x27;rgba(37,99,235,.55)&#x27;);g.addColorStop(1,&#x27;rgba(37,99,235,0)&#x27;);
+x.fillStyle=g;x.beginPath();x.arc(cx,cy,R*1.35,0,7);x.fill();
+orb(false);sat(false);
+g=x.createRadialGradient(cx-R*.35,cy-R*.4,R*.1,cx,cy,R);g.addColorStop(0,&#x27;#1D4ED8&#x27;);g.addColorStop(.6,&#x27;#0B2A66&#x27;);g.addColorStop(1,&#x27;#050E24&#x27;);
+x.fillStyle=g;x.beginPath();x.arc(cx,cy,R,0,7);x.fill();
+x.lineWidth=1.2;
+for(var la=-60;la&lt;=60;la+=30){seg(function(i){return G(la,i*3,1)},121,&#x27;rgba(147,197,253,.28)&#x27;)}
+for(var lo=0;lo&lt;360;lo+=30){seg(function(i){return G(-90+i*3,lo,1)},61,&#x27;rgba(147,197,253,.28)&#x27;)}
+for(var a=-72;a&lt;=72;a+=8){var n=Math.max(6,Math.round(45*Math.cos(a*Math.PI/180)));for(var j=0;j&lt;n;j++){var p=G(a,j*360/n,1);if(p[2]&gt;0){x.fillStyle=&#x27;rgba(147,197,253,&#x27;+(.1+.55*p[2])+&#x27;)&#x27;;x.fillRect(p[0]-1.5,p[1]-1.5,3,3)}}}
+for(var k=0;k&lt;4;k++){var p=G(S[k][0],S[k][1],1);if(p[2]&gt;.05){var q=(t%90)/90;x.strokeStyle=&#x27;rgba(224,238,255,&#x27;+(1-q)*.8+&#x27;)&#x27;;x.lineWidth=2;x.beginPath();x.arc(p[0],p[1],6+22*q,0,7);x.stroke();x.fillStyle=&#x27;#EAF2FF&#x27;;x.beginPath();x.arc(p[0],p[1],7,0,7);x.fill()}}
+x.strokeStyle=&#x27;rgba(147,197,253,.55)&#x27;;x.lineWidth=2;x.beginPath();x.arc(cx,cy,R,0,7);x.stroke();
+orb(true);sat(true);
+rot+=.004;t++;requestAnimationFrame(draw)}
+draw()})();
+&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p class="eyebrow a" style="--i:0">UX &amp; VISUAL DESIGN CASE STUDY</p>
+<h1 class="hero a" style="--i:1">Space<span style="color:#60A5FA">Mirror</span></h1>
+<p class="sub a" style="--i:2" >Terrestrial-Lunar Topological Discovery Engine</p>
+<p class="lead a" style="--i:3">How design turned complex planetary geomorphometry into a mission-planning tool anyone can use.</p>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+</section>
+
+<section id="challenge" class="mid">
+<p class="eyebrow">THE DESIGN CHALLENGE</p>
+<h2 class="t a" style="--i:0">A powerful algorithm that evaluators could not yet use</h2>
+<div class="cards">
+<div class="card a" style="--i:1"><h3>Dense, multidimensional data</h3><p class="ct">SVD-PCA, Horn’s slope kernels and covariance metrics are hard to read for non-technical users.</p></div>
+<div class="card a" style="--i:2"><h3>Slow site evaluation</h3><p class="ct">Judging a landing or analog site meant hours of cross-referencing GIS datasets.</p></div>
+<div class="card a" style="--i:3"><h3>From academic to product</h3><p class="ct">The project needed a stakeholder-ready NASA exploration interface to compete at the hackathon.</p></div>
+</div>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="idea" class="dark" style="justify-content:center">
+<p class="eyebrow">OUR DESIGN IDEA</p>
+<h2 class="tbig a" style="--i:0">Make complex planetary science feel like mission control.</h2>
+<p class="leadlt a" style="--i:2">A dark, tactical interface where anyone can tune, filter and explore Moon and Mars analog sites, with every score visible as a card, a percentage or a bar.</p>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="flow" class="dark">
+<p class="eyebrow">UX ARCHITECTURE</p>
+<h2 class="t a" style="--i:0">A 4-step mission planning journey</h2>
+<div class="cards" style="gap:28px">
+<div class="card a" style="--i:1"><p class="step">01</p><h3>Target selection</h3><p class="ct">Choose the Moon or Mars.</p></div>
+<div class="card a" style="--i:2"><p class="step">02</p><h3>Weight tuning</h3><p class="ct">Set the importance of each topological criterion.</p></div>
+<div class="card a" style="--i:3"><p class="step">03</p><h3>Category filtering</h3><p class="ct">Narrow the sites by category.</p></div>
+<div class="card a" style="--i:4"><p class="step">04</p><h3>Live analysis</h3><p class="ct">Explore the results on the map in real time.</p></div>
+</div>
+<p class="leadwide a" style="--i:5">Progressive disclosure keeps each step simple and moves the user from decision to discovery.</p>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="results" class="mid">
+<p class="eyebrow">DECISION SUPPORT</p>
+<h2 class="t a" style="--i:0">The NASA Scientific Mission Dossier</h2>
+<div class="split">
+<ul class="list a" style="--i:1">
+<li>Deep-dive modal for every site</li>
+<li>Earth analog vs. lunar candidate, side by side</li>
+<li>Landing safety rating (Category 1–3)</li>
+<li>Percentage match score</li>
+<li>Environmental caveats built in</li>
+</ul>
+<div class="panel a" style="--i:2">
+<div class="tags"><p class="pill">LUNAR CANDIDATE</p><p class="tagtxt">Illustrative example</p></div>
+<div class="big"><p class="lbl">Overall match</p><p class="pct">82%</p></div>
+<div class="row"><p class="rl">Slope</p><div class="track"><div class="fill" style="width:360px"></div></div><p class="rv">90%</p></div>
+<div class="row"><p class="rl">Roughness</p><div class="track"><div class="fill" style="width:328px"></div></div><p class="rv">82%</p></div>
+<div class="row"><p class="rl">Relief</p><div class="track"><div class="fill" style="width:296px"></div></div><p class="rv">74%</p></div>
+<div class="warn"><svg style="width:40px;height:40px;color:#93C5FD;flex:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L22 20H2Z"/><path d="M12 9V14"/><path d="M12 17.2H12.01"/></svg><p class="wt">Earth has 1.0 g gravity, 1 atm pressure and radiation exposure that differ from the Moon.</p></div>
+</div>
+</div>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="data" class="dark">
+<p class="eyebrow">VISUAL DESIGN</p>
+<h2 class="t a" style="--i:0">A tactical “Mission Control” aesthetic</h2>
+<div class="cards">
+<div class="card a" style="--i:1"><h3>High-contrast dark theme</h3><p class="ct">Built for long sessions with dense scientific data.</p></div>
+<div class="card a" style="--i:2"><h3>Glassmorphism</h3><p class="ct">Layered translucent panels keep the map in view behind the controls.</p></div>
+<div class="card a" style="--i:3"><h3>Glowing telemetry</h3><p class="ct">Indicators draw the eye to live values and changes.</p></div>
+<div class="card a" style="--i:4"><h3>Clean typography</h3><p class="ct">Clear hierarchy for numbers, labels and warnings.</p></div>
+</div>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="scoring" class="mid">
+<p class="eyebrow">INTERACTION DESIGN</p>
+<h2 class="t a" style="--i:0">Parameter tuning with zero cognitive friction</h2>
+<div class="split">
+<div class="steps a" style="--i:1;width:760px;margin-top:0">
+<div class="srow"><p class="bn">1</p><div><h3>Adjust</h3><p class="cs">Multi-criteria sliders let non-technical users calibrate a complex matrix.</p></div></div>
+<div class="srow"><p class="bn">2</p><div><h3>Recalculate</h3><p class="cs">Scores update instantly, with no waiting and no page reload.</p></div></div>
+<div class="srow"><p class="bn">3</p><div><h3>Re-sort</h3><p class="cs">Cards animate into their new order so the change is easy to follow.</p></div></div>
+</div>
+<div class="panel a" style="--i:2">
+<p class="flab">CRITERIA SLIDERS</p>
+<p class="fmla">Slope · Roughness · Relief · Caves · Solar</p>
+<div class="fsp"></div>
+<p class="flab">FEEDBACK LOOP</p>
+<p class="fmla">Instant recalculation + animated card sorting</p>
+</div>
+</div>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="discovery" class="dark">
+<iframe style="position:absolute;left:1100px;top:190px;width:600px;height:600px;border:0;background:transparent;pointer-events:none" sandbox="allow-scripts" scrolling="no" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;body style=&#x27;margin:0;background:transparent&#x27;&gt;
+&lt;style&gt;html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block}&lt;/style&gt;
+&lt;canvas id=&quot;c&quot; width=&quot;600&quot; height=&quot;600&quot;&gt;&lt;/canvas&gt;
+&lt;script&gt;
+(function(){var c=document.getElementById(&#x27;c&#x27;),x=c.getContext(&#x27;2d&#x27;),W=600,R=187,cx=300,cy=300,T=.42,rot=1.2,t=0;
+var S=[[-24.5,-69.2],[35.0,-116.0],[36.2,-116.8],[75.4,-89.7]];
+function P(X,Y,Z){var y=Y*Math.cos(T)-Z*Math.sin(T),z=Y*Math.sin(T)+Z*Math.cos(T);return[cx+R*X,cy-R*y,z]}
+function G(a,b,r){a*=Math.PI/180;b=b*Math.PI/180+rot;return P(r*Math.cos(a)*Math.sin(b),r*Math.sin(a),r*Math.cos(a)*Math.cos(b))}
+function O(a){var X=1.5*Math.cos(a),Z=1.5*Math.sin(a),B=-.42;return P(X*Math.cos(B),X*Math.sin(B),Z)}
+function seg(f,n,col){x.beginPath();var on=0;for(var i=0;i&lt;n;i++){var p=f(i);if(p[2]&gt;0){on?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]);on=1}else on=0}x.strokeStyle=col;x.stroke()}
+function orb(front){x.beginPath();var on=0;for(var i=0;i&lt;=120;i++){var p=O(i/120*6.2832);if((p[2]&gt;0)==front){on?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]);on=1}else on=0}x.strokeStyle=&#x27;rgba(96,165,250,.6)&#x27;;x.lineWidth=2;x.stroke()}
+function sat(front){var p=O(t*.018);if((p[2]&gt;0)!=front)return;x.fillStyle=&#x27;rgba(147,197,253,.35)&#x27;;x.beginPath();x.arc(p[0],p[1],11,0,7);x.fill();x.fillStyle=&#x27;#DBEAFE&#x27;;x.beginPath();x.arc(p[0],p[1],5,0,7);x.fill()}
+function draw(){x.clearRect(0,0,W,W);
+var g=x.createRadialGradient(cx,cy,R*.9,cx,cy,R*1.35);g.addColorStop(0,&#x27;rgba(37,99,235,.55)&#x27;);g.addColorStop(1,&#x27;rgba(37,99,235,0)&#x27;);
+x.fillStyle=g;x.beginPath();x.arc(cx,cy,R*1.35,0,7);x.fill();
+orb(false);sat(false);
+g=x.createRadialGradient(cx-R*.35,cy-R*.4,R*.1,cx,cy,R);g.addColorStop(0,&#x27;#1D4ED8&#x27;);g.addColorStop(.6,&#x27;#0B2A66&#x27;);g.addColorStop(1,&#x27;#050E24&#x27;);
+x.fillStyle=g;x.beginPath();x.arc(cx,cy,R,0,7);x.fill();
+x.lineWidth=1.2;
+for(var la=-60;la&lt;=60;la+=30){seg(function(i){return G(la,i*3,1)},121,&#x27;rgba(147,197,253,.28)&#x27;)}
+for(var lo=0;lo&lt;360;lo+=30){seg(function(i){return G(-90+i*3,lo,1)},61,&#x27;rgba(147,197,253,.28)&#x27;)}
+for(var a=-72;a&lt;=72;a+=8){var n=Math.max(6,Math.round(45*Math.cos(a*Math.PI/180)));for(var j=0;j&lt;n;j++){var p=G(a,j*360/n,1);if(p[2]&gt;0){x.fillStyle=&#x27;rgba(147,197,253,&#x27;+(.1+.55*p[2])+&#x27;)&#x27;;x.fillRect(p[0]-1.2,p[1]-1.2,2.4,2.4)}}}
+for(var k=0;k&lt;4;k++){var p=G(S[k][0],S[k][1],1);if(p[2]&gt;.05){var q=(t%90)/90;x.strokeStyle=&#x27;rgba(224,238,255,&#x27;+(1-q)*.8+&#x27;)&#x27;;x.lineWidth=2;x.beginPath();x.arc(p[0],p[1],5+18*q,0,7);x.stroke();x.fillStyle=&#x27;#EAF2FF&#x27;;x.beginPath();x.arc(p[0],p[1],6,0,7);x.fill()}}
+x.strokeStyle=&#x27;rgba(147,197,253,.55)&#x27;;x.lineWidth=2;x.beginPath();x.arc(cx,cy,R,0,7);x.stroke();
+orb(true);sat(true);
+rot+=.004;t++;requestAnimationFrame(draw)}
+draw()})();
+&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p class="eyebrow">GEOVISUALIZATION</p>
+<h2 class="t a" style="--i:0">A map that separates what is new, raw and proven</h2>
+<div class="steps" style="margin-top:40px">
+<div class="srow a" style="--i:1"><p class="bn" style="color:#FBBF24">1</p><div><h3 style="color:#FBBF24">Gold markers</h3><p class="cs">Newly discovered Egyptian sites.</p></div></div>
+<div class="srow a" style="--i:2"><p class="bn" style="color:#22D3EE">2</p><div><h3 style="color:#22D3EE">Cyan markers</h3><p class="cs">Raw EDM scans.</p></div></div>
+<div class="srow a" style="--i:3"><p class="bn" style="color:#A78BFA">3</p><div><h3 style="color:#A78BFA">Purple markers</h3><p class="cs">NASA benchmark locations.</p></div></div>
+<div class="srow a" style="--i:4"><p class="bn">4</p><div><h3>Satellite and topographic overlays</h3><p class="cs">Esri satellite and USGS topographic layers, with smooth flyTo transitions between Earth analog coordinates.</p></div></div>
+</div>
+<p class="cap" style="position:absolute;left:1100px;top:810px;width:600px">Pulsing points: benchmark analog sites</p>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="limits" class="mid">
+<p class="eyebrow">DESIGN SYSTEM &amp; HANDOFF</p>
+<h2 class="t a" style="--i:0">Built once, ready for the web team</h2>
+<div class="cards">
+<div class="card a" style="--i:1"><h3>Atomic UI components</h3><p class="ct">Modular cards, status pills, filter chips and metric bars.</p></div>
+<div class="card a" style="--i:2"><h3>Framework-ready</h3><p class="ct">Compatible with both Vanilla JS and React/Vite implementations.</p></div>
+<div class="card a" style="--i:3"><h3>Complete handoff package</h3><p class="ct">Interactive wireframes, client-side formula specifications and visual asset guidelines.</p></div>
+</div>
+<p class="leadwide a" style="--i:4">The result: 100% design fidelity once deployed.</p>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="team" class="dark">
+<p class="eyebrow">STRATEGIC IMPACT</p>
+<h2 class="t a" style="--i:0">From research algorithm to exploration product</h2>
+<div class="cards" style="gap:28px">
+<div class="card a" style="--i:1;padding:36px 32px"><h3>Democratized planetary data</h3><p class="cs">SVD-PCA, Horn’s slope kernels and covariance metrics become visual cards and percentage matches that any evaluator can read.</p></div>
+<div class="card a" style="--i:2;padding:36px 32px"><h3>Faster feasibility</h3><p class="cs">Site evaluation drops from hours of GIS cross-referencing to under 3 seconds of live, in-browser filtering.</p></div>
+<div class="card a" style="--i:3;padding:36px 32px"><h3>Pitch-ready</h3><p class="cs">An immersive, production-grade interface that raised the project’s hackathon competitiveness.</p></div>
+<div class="card a" style="--i:4;padding:36px 32px"><h3>Rigor with empathy</h3><p class="cs">Safety caveats for gravity, pressure and radiation sit inside the UI without hurting the experience.</p></div>
+</div>
+<p class="fl">TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+<p class="pg">Slide </p>
+</section>
+
+<section id="closing" class="dark cover">
+<iframe style="position:absolute;left:992px;top:140px;width:800px;height:800px;border:0;background:transparent;pointer-events:none" sandbox="allow-scripts" scrolling="no" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;body style=&#x27;margin:0;background:transparent&#x27;&gt;
+&lt;style&gt;html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block}&lt;/style&gt;
+&lt;canvas id=&quot;c&quot; width=&quot;800&quot; height=&quot;800&quot;&gt;&lt;/canvas&gt;
+&lt;script&gt;
+(function(){var c=document.getElementById(&#x27;c&#x27;),x=c.getContext(&#x27;2d&#x27;),W=800,R=250,cx=400,cy=400,T=.42,rot=3.6,t=0;
+var S=[[-24.5,-69.2],[35.0,-116.0],[36.2,-116.8],[75.4,-89.7]];
+function P(X,Y,Z){var y=Y*Math.cos(T)-Z*Math.sin(T),z=Y*Math.sin(T)+Z*Math.cos(T);return[cx+R*X,cy-R*y,z]}
+function G(a,b,r){a*=Math.PI/180;b=b*Math.PI/180+rot;return P(r*Math.cos(a)*Math.sin(b),r*Math.sin(a),r*Math.cos(a)*Math.cos(b))}
+function O(a){var X=1.5*Math.cos(a),Z=1.5*Math.sin(a),B=-.42;return P(X*Math.cos(B),X*Math.sin(B),Z)}
+function seg(f,n,col){x.beginPath();var on=0;for(var i=0;i&lt;n;i++){var p=f(i);if(p[2]&gt;0){on?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]);on=1}else on=0}x.strokeStyle=col;x.stroke()}
+function orb(front){x.beginPath();var on=0;for(var i=0;i&lt;=120;i++){var p=O(i/120*6.2832);if((p[2]&gt;0)==front){on?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]);on=1}else on=0}x.strokeStyle=&#x27;rgba(96,165,250,.6)&#x27;;x.lineWidth=2;x.stroke()}
+function sat(front){var p=O(t*.018);if((p[2]&gt;0)!=front)return;x.fillStyle=&#x27;rgba(147,197,253,.35)&#x27;;x.beginPath();x.arc(p[0],p[1],14,0,7);x.fill();x.fillStyle=&#x27;#DBEAFE&#x27;;x.beginPath();x.arc(p[0],p[1],6,0,7);x.fill()}
+function draw(){x.clearRect(0,0,W,W);
+var g=x.createRadialGradient(cx,cy,R*.9,cx,cy,R*1.35);g.addColorStop(0,&#x27;rgba(37,99,235,.55)&#x27;);g.addColorStop(1,&#x27;rgba(37,99,235,0)&#x27;);
+x.fillStyle=g;x.beginPath();x.arc(cx,cy,R*1.35,0,7);x.fill();
+orb(false);sat(false);
+g=x.createRadialGradient(cx-R*.35,cy-R*.4,R*.1,cx,cy,R);g.addColorStop(0,&#x27;#1D4ED8&#x27;);g.addColorStop(.6,&#x27;#0B2A66&#x27;);g.addColorStop(1,&#x27;#050E24&#x27;);
+x.fillStyle=g;x.beginPath();x.arc(cx,cy,R,0,7);x.fill();
+x.lineWidth=1.2;
+for(var la=-60;la&lt;=60;la+=30){seg(function(i){return G(la,i*3,1)},121,&#x27;rgba(147,197,253,.28)&#x27;)}
+for(var lo=0;lo&lt;360;lo+=30){seg(function(i){return G(-90+i*3,lo,1)},61,&#x27;rgba(147,197,253,.28)&#x27;)}
+for(var a=-72;a&lt;=72;a+=8){var n=Math.max(6,Math.round(45*Math.cos(a*Math.PI/180)));for(var j=0;j&lt;n;j++){var p=G(a,j*360/n,1);if(p[2]&gt;0){x.fillStyle=&#x27;rgba(147,197,253,&#x27;+(.1+.55*p[2])+&#x27;)&#x27;;x.fillRect(p[0]-1.5,p[1]-1.5,3,3)}}}
+for(var k=0;k&lt;4;k++){var p=G(S[k][0],S[k][1],1);if(p[2]&gt;.05){var q=(t%90)/90;x.strokeStyle=&#x27;rgba(224,238,255,&#x27;+(1-q)*.8+&#x27;)&#x27;;x.lineWidth=2;x.beginPath();x.arc(p[0],p[1],6+22*q,0,7);x.stroke();x.fillStyle=&#x27;#EAF2FF&#x27;;x.beginPath();x.arc(p[0],p[1],7,0,7);x.fill()}}
+x.strokeStyle=&#x27;rgba(147,197,253,.55)&#x27;;x.lineWidth=2;x.beginPath();x.arc(cx,cy,R,0,7);x.stroke();
+orb(true);sat(true);
+rot+=.004;t++;requestAnimationFrame(draw)}
+draw()})();
+&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p class="eyebrow a" style="--i:0">THANK YOU</p>
+<h1 class="hero a" style="--i:1;font-size:88px;line-height:1.1">Complex data.<br><span style="color:#60A5FA">Human-centered design.</span></h1>
+<p class="lead a" style="--i:3">Turning the Terrestrial-Lunar Topological Discovery Engine into a tangible NASA exploration product.</p>
+<p class="fl">SpaceMirror · TL-TDE · Design Deliverables &amp; Strategic Impact</p>
+</section>
+
+</div>
+<div class="dots"></div>
+<script>
+(function(){
+var deck=document.getElementById('deck'),S=[].slice.call(deck.children),n=S.length,i=0;
+var dots=document.querySelector('.dots');
+S.forEach(function(_,k){var d=document.createElement('i');d.onclick=function(e){e.stopPropagation();go(k)};dots.appendChild(d)});
+function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);deck.style.transform='translate(-50%,-50%) scale('+s+')'}
+function go(k){k=Math.max(0,Math.min(n-1,k));i=k;
+ S.forEach(function(el,j){el.classList.toggle('active',j===k);el.classList.toggle('before',j<k);el.classList.toggle('after',j>k)});
+ [].forEach.call(dots.children,function(d,j){d.classList.toggle('on',j===k)});
+ try{history.replaceState(null,'','#'+(k+1))}catch(e){}}
+addEventListener('resize',fit);fit();
+addEventListener('keydown',function(e){
+ if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].indexOf(e.key)>-1){e.preventDefault();go(i+1)}
+ else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(e.key)>-1){e.preventDefault();go(i-1)}
+ else if(e.key==='Home')go(0);else if(e.key==='End')go(n-1);
+ else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
+addEventListener('click',function(e){go(e.clientX<innerWidth*.25?i-1:i+1)});
+var x0=null;addEventListener('touchstart',function(e){x0=e.touches[0].clientX});
+addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)go(dx<0?i+1:i-1);x0=null});
+var h=parseInt(location.hash.slice(1),10);go(isNaN(h)?0:h-1);
+})();
+</script>
+</body></html>
