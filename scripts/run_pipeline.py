@@ -18,10 +18,10 @@ def main():
         description="Discover and characterize terrestrial analog sites on Earth matching lunar base topography."
     )
     parser.add_argument(
-        "--earth_dem",
+        "--earth_dir",
         type=str,
-        default="Data/Earth_Data/s01w047.hgt",
-        help="Path to Earth elevation data model (SRTM HGT or GeoTIFF)"
+        default="Data/Earth_Data",
+        help="Path to directory containing Earth elevation data models (SRTM HGT files)"
     )
     parser.add_argument(
         "--moon_dem",
@@ -39,7 +39,7 @@ def main():
     args = parser.parse_args()
 
     pipeline = PlanetaryAnalogPipeline(
-        earth_hgt_path=args.earth_dem,
+        earth_data_dir=args.earth_dir,
         moon_dem_path=args.moon_dem,
         output_dir=args.output_dir
     )

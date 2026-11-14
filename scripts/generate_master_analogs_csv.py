@@ -2,6 +2,12 @@
 Master Generator for Clean, 100% Non-Overlapping, Fully Deduplicated
 Terrestrial-Planetary Analog Catalog with Subsurface, Cave, and Egyptian Discoveries.
 NASA Space Apps Challenge 2026.
+
+ALL coordinates, elevations, slopes, roughness, relief, pit depths, and illumination proxies
+are computed 100% DIRECTLY from raw NASA Elevation Data Models (EDM/DEM):
+  - Moon: NASA LOLA Global 16 PPD DEM (Data/Moon_Data/ldem_16_float.img)
+  - Earth: NASA SRTM 1-Arc-Second (30m) HGT tiles (Data/Earth_Data/*.hgt)
+Zero hardcoded metrics. Complete empirical traceability.
 """
 
 import os
@@ -13,262 +19,229 @@ import pandas as pd
 sys.path.insert(0, os.path.abspath("."))
 
 from src.features import extract_topological_feature_vector
+from src.preprocessing import LunarDEMIngestor, EarthMultiSRTMIngestor, EarthSRTMIngestor
 
-# Physical constants
-R_MOON = 1737400.0
-R_EARTH = 6378137.0
+print("=" * 75)
+print("GENERATING MASTER PLANETARY ANALOGS DELIVERABLE DIRECTLY FROM NASA EDMs")
+print("=" * 75)
 
-# 1. Planetary Targets (Moon & Mars)
-PLANETARY_TARGETS = [
+# 1. Ingest Lunar EDM and dynamically compute features for all candidate Moon sites
+print("[1/4] Ingesting Lunar LOLA DEM (Data/Moon_Data/ldem_16_float.img)...")
+lunar_ingestor = LunarDEMIngestor("Data/Moon_Data/ldem_16_float.img")
+lunar_ingestor.load()
+
+LUNAR_TARGET_DEFS = [
     {
+        "id": "MOON_MTP",
         "name": "Mare Tranquillitatis Pit (MTP)",
         "body": "Moon",
-        "lat": 8.330, "lon": 33.220,
+        "lat": 8.330, "lon": 33.220, "radius_km": 10.0,
         "type": "Subsurface Lava Tube / Pit Skylight",
-        "mission_focus": "Confirmed subsurface cave conduit entrance for radiation-shielded habitat.",
-        "slope_deg": 0.17, "relief_m": 58.5, "roughness_m": 12.3, "pit_depth_m": 105.0,
-        "shielding_pct": 95.0, "solar_exp": 0.52
+        "mission_focus": "Confirmed subsurface cave conduit entrance for radiation-shielded habitat."
     },
     {
+        "id": "MOON_MARIUS",
         "name": "Marius Hills Volcanic Dome & Skylight",
         "body": "Moon",
-        "lat": 14.200, "lon": 303.200,
+        "lat": 14.200, "lon": 303.200, "radius_km": 10.0,
         "type": "Volcanic Dome Field & Lava Tube",
-        "mission_focus": "Sinuous rille roof collapse skylight leading into intact lava tube.",
-        "slope_deg": 0.92, "relief_m": 259.0, "roughness_m": 51.9, "pit_depth_m": 45.0,
-        "shielding_pct": 88.0, "solar_exp": 0.48
+        "mission_focus": "Sinuous rille roof collapse skylight leading into intact lava tube."
     },
     {
-        "name": "Connecting Ridge (Artemis III)",
-        "body": "Moon",
-        "lat": -89.400, "lon": 222.000,
-        "type": "Polar Highland Ridge & Col",
-        "mission_focus": "Strategic traverse corridor connecting Shackleton and de Gerlache crater rims.",
-        "slope_deg": 11.66, "relief_m": 3704.0, "roughness_m": 635.2, "pit_depth_m": 0.0,
-        "shielding_pct": 10.0, "solar_exp": 0.88
-    },
-    {
-        "name": "Peak Near Shackleton (Artemis III)",
-        "body": "Moon",
-        "lat": -88.900, "lon": 124.500,
-        "type": "Crater Rim Peak of Eternal Light",
-        "mission_focus": "Near-permanent solar power illumination adjacent to deep cryogenic cold traps.",
-        "slope_deg": 8.47, "relief_m": 3074.0, "roughness_m": 511.7, "pit_depth_m": 0.0,
-        "shielding_pct": 12.0, "solar_exp": 0.92
-    },
-    {
+        "id": "MOON_MOUTON",
         "name": "Mons Mouton Summit (Artemis III)",
         "body": "Moon",
-        "lat": -84.800, "lon": 31.700,
+        "lat": -84.800, "lon": 31.700, "radius_km": 15.0,
         "type": "Elevated Flat Highland Plateau",
-        "mission_focus": "Large flat summit plateau candidate for Artemis base camp infrastructure.",
-        "slope_deg": 4.78, "relief_m": 1951.0, "roughness_m": 229.7, "pit_depth_m": 0.0,
-        "shielding_pct": 15.0, "solar_exp": 0.75
+        "mission_focus": "Large flat summit plateau candidate for Artemis base camp infrastructure."
     },
     {
-        "name": "Jezero Crater Delta & Rim",
-        "body": "Mars",
-        "lat": 18.380, "lon": 77.580,
-        "type": "Ancient Lacustrine Fan & Crater Scarp",
-        "mission_focus": "Perseverance rover biosignature sampling and delta traverse.",
-        "slope_deg": 5.40, "relief_m": 820.0, "roughness_m": 145.0, "pit_depth_m": 15.0,
-        "shielding_pct": 40.0, "solar_exp": 0.60
+        "id": "MOON_SHACKLETON",
+        "name": "Peak Near Shackleton (Artemis III)",
+        "body": "Moon",
+        "lat": -88.900, "lon": 124.500, "radius_km": 15.0,
+        "type": "Crater Rim Peak of Eternal Light",
+        "mission_focus": "Near-permanent solar power illumination adjacent to deep cryogenic cold traps."
+    },
+    {
+        "id": "MOON_CONNECTING",
+        "name": "Connecting Ridge (Artemis III)",
+        "body": "Moon",
+        "lat": -89.400, "lon": 222.000, "radius_km": 15.0,
+        "type": "Polar Highland Ridge & Col",
+        "mission_focus": "Strategic traverse corridor connecting Shackleton and de Gerlache crater rims."
+    },
+    {
+        "id": "MOON_MALAPERT",
+        "name": "Malapert Massif (Artemis III)",
+        "body": "Moon",
+        "lat": -85.990, "lon": 357.070, "radius_km": 15.0,
+        "type": "High-Elevation Massif Ridge",
+        "mission_focus": "Continuous direct line-of-sight communication to Earth and permanent sunlight."
+    },
+    {
+        "id": "MOON_FAUSTINI",
+        "name": "Faustini Rim A (Artemis III)",
+        "body": "Moon",
+        "lat": -87.300, "lon": 77.000, "radius_km": 15.0,
+        "type": "Steep Highland Impact Crater Rim",
+        "mission_focus": "High-altitude vantage point overlooking deep Faustini cryogenic cold traps."
+    },
+    {
+        "id": "MOON_NOBILE",
+        "name": "Nobile Rim 1 (VIPER / Artemis)",
+        "body": "Moon",
+        "lat": -85.200, "lon": 37.800, "radius_km": 15.0,
+        "type": "Degraded Polar Impact Crater",
+        "mission_focus": "Rolling degraded terrain with accessible volatile-bearing micro-cold traps."
     }
 ]
 
-# 2. Extract strictly NON-OVERLAPPING spatial grid cells from s01w047.hgt
-print("Extracting non-overlapping spatial grid cells from Earth EDM (s01w047.hgt)...")
-raw_earth = np.fromfile("Data/Earth_Data/s01w047.hgt", dtype=">i2").reshape((3601, 3601))
-dy_earth = dx_earth = 30.87
+PLANETARY_TARGETS = []
+for target in LUNAR_TARGET_DEFS:
+    patch_info = lunar_ingestor.extract_patch(target["lat"], target["lon"], radius_km=target["radius_km"])
+    feat = extract_topological_feature_vector(
+        patch_info["patch"], patch_info["dy_meters"], patch_info["dx_meters"]
+    )
+    PLANETARY_TARGETS.append({
+        "id": target["id"],
+        "name": target["name"],
+        "body": target["body"],
+        "type": target["type"],
+        "lat": target["lat"],
+        "lon": target["lon"],
+        "bbox": patch_info["bbox"],
+        "mission_focus": target["mission_focus"],
+        "slope_deg": feat["mean_slope_deg"],
+        "relief_m": feat["local_relief_m"],
+        "roughness_m": feat["rms_roughness_m"],
+        "pit_depth_m": feat["pit_depth_m"],
+        "shielding_pct": feat["cavity_shielding_potential_pct"],
+        "solar_exp": feat["solar_exposure_proxy"],
+        "elev_mean_m": feat["elev_mean_m"],
+        **feat
+    })
 
-# Step with patch_size = stride = 300 pixels (~9.26 km) -> ZERO OVERLAP!
-patch_dim = 300
-earth_edm_candidates = []
-candidate_idx = 1
+print(f"      Extracted 100% empirical features for {len(PLANETARY_TARGETS)} Lunar candidate targets from LOLA DEM.")
 
-for r in range(2400, 3601 - patch_dim, patch_dim):  # NON-OVERLAPPING STEPS
-    for c in range(0, 3601 - patch_dim, patch_dim):  # NON-OVERLAPPING STEPS
-        sub = raw_earth[r:r+patch_dim, c:c+patch_dim]
-        # Land filter: at least 70% valid land above sea level
-        if np.mean(sub > 0) >= 0.70:
-            feat = extract_topological_feature_vector(sub, dy_earth, dx_earth)
-            
-            lat_center = - (r + patch_dim / 2.0) / 3600.0
-            lon_center = -47.0 + (c + patch_dim / 2.0) / 3600.0
-            min_lat = - (r + patch_dim) / 3600.0
-            max_lat = - r / 3600.0
-            min_lon = -47.0 + c / 3600.0
-            max_lon = -47.0 + (c + patch_dim) / 3600.0
-            
-            if lon_center < -46.7:
-                sector_desc = f"Western Bragança Coastal Plateau (Grid Block {candidate_idx})"
-            elif lon_center < -46.4:
-                sector_desc = f"Central Gurupi Basin Plain (Grid Block {candidate_idx})"
-            else:
-                sector_desc = f"Eastern Maranhão Boundary Uplands (Grid Block {candidate_idx})"
-                
-            earth_edm_candidates.append({
-                "candidate_id": f"EARTH_DISCOVERY_BR_{candidate_idx:02d}",
-                "discovery_status": "NEW CANDIDATE DISCOVERY (Direct EDM Scan)",
-                "region_name": sector_desc,
-                "country": "Brazil (Pará)",
-                "lat": lat_center,
-                "lon": lon_center,
-                "bbox": [min_lat, min_lon, max_lat, max_lon],
-                "geological_facies": "Low-Relief Alluvial / Sedimentary Plain",
-                "lithology": "Quaternary alluvial sediments, lateritic crust, sandstone",
-                "scientific_significance": "Newly discovered planar terrain analog directly extracted from raw SRTM EDM. Exhibits ultra-low slope and stable bearing capacity matching lunar mare basins.",
-                **feat
-            })
-            candidate_idx += 1
 
-print(f"Extracted {len(earth_edm_candidates)} strictly non-overlapping candidate grid cells from s01w047.hgt.")
+# 2. Ingest Earth SRTM EDMs and compute features for all verified sites
+print("[2/4] Ingesting NASA Earth SRTM HGT tiles from Data/Earth_Data...")
+earth_multi = EarthMultiSRTMIngestor("Data/Earth_Data")
 
-# 3. Novel Egyptian Planetary Analog Discoveries (The Wow Factor)
-EGYPTIAN_DISCOVERIES = [
+VERIFIED_EARTH_SITES = [
     {
         "candidate_id": "EARTH_DISCOVERY_EG_01",
         "discovery_status": "NEW CANDIDATE DISCOVERY (Egypt Western Desert)",
         "region_name": "Bahariya Black Desert Volcanic Field (الصحراء السوداء)",
         "country": "Egypt (Giza / New Valley)",
-        "lat": 28.3650,
-        "lon": 28.8450,
-        "bbox": [28.2500, 28.7500, 28.4800, 28.9500],
+        "lat": 28.3650, "lon": 28.8450, "radius_km": 3.0,
         "geological_facies": "Conical Basalt Cinder Cones & Dolerite Apron",
         "lithology": "Doleritic basalt, ferruginous sandstone, volcanic tuff",
-        "scientific_significance": "Pristine hyper-arid volcanic cone field. Conical dolerite mounds rising from flat desert aprons replicate the Marius Hills volcanic dome field on the Moon and Cerberus Fossae cones on Mars.",
-        "mean_slope_deg": 3.85,
-        "median_slope_deg": 2.90,
-        "std_slope_deg": 3.40,
-        "p90_slope_deg": 8.90,
-        "fraction_steep": 0.03,
-        "rms_roughness_m": 48.0,
-        "vrm": 0.0042,
-        "local_relief_m": 240.0,
-        "hypsometric_integral": 0.44,
-        "elevation_skewness": 0.38,
-        "elev_mean_m": 210.0,
-        "pit_depth_m": 35.0,
-        "mean_negative_tpi_m": 6.8,
-        "rim_scarp_curvature": 0.0085,
-        "cavity_shielding_potential_pct": 82.0,
-        "solar_exposure_proxy": 0.62
+        "scientific_significance": "Pristine hyper-arid volcanic cone field. Conical dolerite mounds rising from flat desert aprons replicate the Marius Hills volcanic dome field on the Moon and Cerberus Fossae cones on Mars."
     },
     {
         "candidate_id": "EARTH_DISCOVERY_EG_02",
         "discovery_status": "NEW CANDIDATE DISCOVERY (Egypt Faiyum)",
         "region_name": "Gebel Qatrani Basalt Flows & Widan El-Faras (جبل قطراني)",
         "country": "Egypt (Faiyum Depression)",
-        "lat": 29.6450,
-        "lon": 30.5900,
-        "bbox": [29.5800, 30.4800, 29.7200, 30.7000],
+        "lat": 29.6450, "lon": 30.5900, "radius_km": 3.0,
         "geological_facies": "Continental Flood Basalt Sheet & Inverted Channels",
         "lithology": "Tholeiitic columnar basalt, silica-cemented sandstone",
-        "scientific_significance": "Extensive Oligocene columnar basalt flows with dry sinuous channels. Provides an un-vegetated basaltic pavement matching Mare Tranquillitatis and Apollo 11 mare basalts.",
-        "mean_slope_deg": 2.10,
-        "median_slope_deg": 1.70,
-        "std_slope_deg": 1.95,
-        "p90_slope_deg": 5.20,
-        "fraction_steep": 0.01,
-        "rms_roughness_m": 28.0,
-        "vrm": 0.0028,
-        "local_relief_m": 125.0,
-        "hypsometric_integral": 0.48,
-        "elevation_skewness": 0.12,
-        "elev_mean_m": 340.0,
-        "pit_depth_m": 22.0,
-        "mean_negative_tpi_m": 4.5,
-        "rim_scarp_curvature": 0.0062,
-        "cavity_shielding_potential_pct": 74.0,
-        "solar_exposure_proxy": 0.58
+        "scientific_significance": "Extensive Oligocene columnar basalt flows with dry sinuous channels. Provides an un-vegetated basaltic pavement matching Mare Tranquillitatis and Apollo 11 mare basalts."
     },
     {
         "candidate_id": "EARTH_DISCOVERY_EG_03",
         "discovery_status": "NEW CANDIDATE DISCOVERY (Egypt Western Desert)",
         "region_name": "Djara Stalactite Subsurface Cave (كهف الجارة)",
         "country": "Egypt (Asyut Plateau)",
-        "lat": 27.3800,
-        "lon": 29.8050,
-        "bbox": [27.3500, 29.7800, 27.4200, 29.8500],
+        "lat": 27.3800, "lon": 29.8050, "radius_km": 2.5,
         "geological_facies": "Subterranean Karst Cavity & Skylight Entrance",
         "lithology": "Eocene limestone, calcite speleothems, hyper-arid regolith",
-        "scientific_significance": "Natural subterranean cave entrance in a hyper-arid plateau. Replicates skylight collapse into subsurface conduits like Mare Tranquillitatis Pit for testing drone navigation and astronaut subterranean habitat deployment.",
-        "mean_slope_deg": 1.85,
-        "median_slope_deg": 1.40,
-        "std_slope_deg": 1.60,
-        "p90_slope_deg": 4.50,
-        "fraction_steep": 0.00,
-        "rms_roughness_m": 18.0,
-        "vrm": 0.0021,
-        "local_relief_m": 75.0,
-        "hypsometric_integral": 0.39,
-        "elevation_skewness": -0.45,
-        "elev_mean_m": 285.0,
-        "pit_depth_m": 48.0,
-        "mean_negative_tpi_m": 12.4,
-        "rim_scarp_curvature": 0.0140,
-        "cavity_shielding_potential_pct": 94.0,
-        "solar_exposure_proxy": 0.40
-    }
-]
-
-# 4. Global Reference Benchmarks (for Highland Massifs)
-GLOBAL_BENCHMARKS = [
+        "scientific_significance": "Natural subterranean cave entrance in a hyper-arid plateau. Replicates skylight collapse into subsurface conduits like Mare Tranquillitatis Pit for testing drone navigation and astronaut subterranean habitat deployment."
+    },
+    {
+        "candidate_id": "EARTH_BENCHMARK_AZ_01",
+        "discovery_status": "GLOBAL GEOLOGICAL BENCHMARK",
+        "region_name": "Barringer Meteor Crater",
+        "country": "United States (Arizona)",
+        "lat": 35.0270, "lon": -111.0220, "radius_km": 2.5,
+        "geological_facies": "Simple Bowl Impact Crater & Inverted Ejecta Flap",
+        "lithology": "Shocked Coconino sandstone, Kaibab limestone, impact melt spherules",
+        "scientific_significance": "Benchmark simple impact morphometry on Earth (Gene Shoemaker Apollo training site). Replicates steep internal crater scarps of Shackleton and Faustini rims."
+    },
     {
         "candidate_id": "EARTH_BENCHMARK_CA_01",
         "discovery_status": "GLOBAL GEOLOGICAL BENCHMARK",
         "region_name": "Mistastin Lake Impact Crater (Kamestastin)",
         "country": "Canada (Labrador)",
-        "lat": 55.8830, "lon": -63.3000,
-        "bbox": [55.80, -63.45, 55.97, -63.15],
-        "geological_facies": "Complex Anorthosite Impact Crater",
-        "lithology": "Anorthosite, impact melt sheet, suevite breccia",
-        "scientific_significance": "Earth's premier lunar highland analog. Formed directly in an anorthosite pluton identical to lunar ferroan anorthosite.",
-        "mean_slope_deg": 11.20, "median_slope_deg": 9.80, "std_slope_deg": 6.10, "p90_slope_deg": 18.40,
-        "fraction_steep": 0.22, "rms_roughness_m": 680.0, "vrm": 0.0140, "local_relief_m": 2850.0,
-        "hypsometric_integral": 0.52, "elevation_skewness": 0.45, "elev_mean_m": 420.0,
-        "pit_depth_m": 120.0, "mean_negative_tpi_m": 24.0, "rim_scarp_curvature": 0.0180,
-        "cavity_shielding_potential_pct": 65.0, "solar_exposure_proxy": 0.72
+        "lat": 55.8830, "lon": -63.3000, "radius_km": 3.0,
+        "geological_facies": "Complex Impact Crater in Anorthositic Target",
+        "lithology": "Anorthosite, granodiorite, impact melt sheet, suevite breccia",
+        "scientific_significance": "Earth's premier lunar highland analog. Formed directly in an anorthosite pluton identical to lunar ferroan anorthosite (FAN)."
     },
     {
-        "candidate_id": "EARTH_BENCHMARK_AQ_01",
+        "candidate_id": "EARTH_BENCHMARK_HI_01",
         "discovery_status": "GLOBAL GEOLOGICAL BENCHMARK",
-        "region_name": "Asgard Range, McMurdo Dry Valleys",
-        "country": "Antarctica",
-        "lat": -77.7500, "lon": 161.5000,
-        "bbox": [-77.85, 161.20, -77.65, 161.80],
-        "geological_facies": "Hyper-arid Periglacial Massif & Col",
-        "lithology": "Ferrar dolerite sills, Beacon sandstone, cryogenic permafrost",
-        "scientific_significance": "Liquid water-free cryogenic massif replicating the extreme 5km relief and thermal conditions of Malapert Massif.",
-        "mean_slope_deg": 14.10, "median_slope_deg": 12.50, "std_slope_deg": 8.30, "p90_slope_deg": 26.20,
-        "fraction_steep": 0.42, "rms_roughness_m": 1150.0, "vrm": 0.0185, "local_relief_m": 4480.0,
-        "hypsometric_integral": 0.58, "elevation_skewness": 0.38, "elev_mean_m": 1620.0,
-        "pit_depth_m": 0.0, "mean_negative_tpi_m": 0.0, "rim_scarp_curvature": 0.0050,
-        "cavity_shielding_potential_pct": 10.0, "solar_exposure_proxy": 0.85
-    },
-    {
-        "candidate_id": "EARTH_BENCHMARK_IS_01",
-        "discovery_status": "GLOBAL GEOLOGICAL BENCHMARK",
-        "region_name": "Holuhraun Basalt Flood Plain",
-        "country": "Iceland",
-        "lat": 64.8500, "lon": -16.8300,
-        "bbox": [64.80, -16.92, 64.92, -16.72],
-        "geological_facies": "Pristine Flood Basalt Lava Sheet",
-        "lithology": "Tholeiitic basalt, vesicle crusts, collapse pits",
-        "scientific_significance": "Un-vegetated flood basalt sheet matching lunar mare basalt plain radar texture and lander stability.",
-        "mean_slope_deg": 1.20, "median_slope_deg": 0.95, "std_slope_deg": 1.00, "p90_slope_deg": 2.80,
-        "fraction_steep": 0.00, "rms_roughness_m": 34.0, "vrm": 0.0018, "local_relief_m": 140.0,
-        "hypsometric_integral": 0.44, "elevation_skewness": 0.05, "elev_mean_m": 720.0,
-        "pit_depth_m": 18.0, "mean_negative_tpi_m": 3.8, "rim_scarp_curvature": 0.0055,
-        "cavity_shielding_potential_pct": 72.0, "solar_exposure_proxy": 0.55
+        "region_name": "Mauna Kea Volcanic Massif & Cinder Cones",
+        "country": "United States (Hawaii)",
+        "lat": 19.8200, "lon": -155.4680, "radius_km": 3.5,
+        "geological_facies": "High-Elevation Basaltic Shield Massif & Tephra Cones",
+        "lithology": "Alkalic basalt, hawaiite, ankaramite, cinders",
+        "scientific_significance": "High-altitude extreme elevation massif with volcanic cinder cones. Historic Apollo astronaut training ground replicating Mons Mouton and Malapert Massif high-elevation summit plateaus."
     }
 ]
 
-# Combine all unique terrestrial analog candidate sites
-ALL_EARTH_CANDIDATES = earth_edm_candidates + EGYPTIAN_DISCOVERIES + GLOBAL_BENCHMARKS
-print(f"Total Unique Terrestrial Candidates: {len(ALL_EARTH_CANDIDATES)}")
+ALL_EARTH_CANDIDATES = []
 
-# 5. Multi-Feature Matching Engine
+for site in VERIFIED_EARTH_SITES:
+    patch_info = earth_multi.extract_patch(site["lat"], site["lon"], radius_km=site["radius_km"])
+    feat = extract_topological_feature_vector(
+        patch_info["patch"], patch_info["dy_meters"], patch_info["dx_meters"]
+    )
+    ALL_EARTH_CANDIDATES.append({
+        **site,
+        "bbox": patch_info["bbox"],
+        "source_tile": patch_info["source"],
+        **feat
+    })
+
+# 3. Extract non-overlapping spatial scan patches from s01w047.hgt (Brazil Pará)
+para_tile_path = "Data/Earth_Data/s01w047.hgt"
+if os.path.exists(para_tile_path):
+    para_ing = EarthSRTMIngestor(para_tile_path, base_lat=-1.0, base_lon=-47.0)
+    para_ing.load()
+    para_patches = para_ing.extract_patches(patch_dim_pixels=300, stride_pixels=300, min_land_fraction=0.7)
+    for idx, p in enumerate(para_patches):
+        feat = extract_topological_feature_vector(p["patch"], p["dy_meters"], p["dx_meters"])
+        lon_center = p["center_lon"]
+        if lon_center < -46.7:
+            sector = f"Western Bragança Coastal Plateau (Grid Block {idx+1})"
+        elif lon_center < -46.4:
+            sector = f"Central Gurupi Basin Plain (Grid Block {idx+1})"
+        else:
+            sector = f"Eastern Maranhão Boundary Uplands (Grid Block {idx+1})"
+            
+        ALL_EARTH_CANDIDATES.append({
+            "candidate_id": f"EARTH_DISCOVERY_BR_{idx+1:02d}",
+            "discovery_status": "NEW CANDIDATE DISCOVERY (Direct EDM Scan)",
+            "region_name": sector,
+            "country": "Brazil (Pará)",
+            "lat": p["center_lat"],
+            "lon": p["center_lon"],
+            "bbox": p["bbox"],
+            "source_tile": "s01w047.hgt",
+            "geological_facies": "Low-Relief Alluvial / Sedimentary Plain",
+            "lithology": "Quaternary alluvial sediments, lateritic crust, sandstone",
+            "scientific_significance": "Newly discovered planar terrain analog directly extracted from raw SRTM EDM. Exhibits ultra-low slope and stable bearing capacity matching lunar mare basins.",
+            **feat
+        })
+
+print(f"      Compiled {len(ALL_EARTH_CANDIDATES)} total terrestrial candidates directly from SRTM HGT tiles.")
+
+
+# 4. Multi-Feature Matching Engine
+print("[3/4] Computing Planetary Topological Similarity Index (PTSI) and matching candidates...")
 master_rows = []
 
 for ec in ALL_EARTH_CANDIDATES:
@@ -293,7 +266,7 @@ for ec in ALL_EARTH_CANDIDATES:
         delta_shield = abs(ec.get("cavity_shielding_potential_pct", 10.0) - pt["shielding_pct"])
         s_cave = np.exp(-delta_shield / 20.0)
         
-        # 5. Solar Illumination / Exposure match
+        # 5. Solar Illumination / Exposure match (sigma = 0.25)
         delta_solar = abs(ec.get("solar_exposure_proxy", 0.5) - pt["solar_exp"])
         s_solar = np.exp(-delta_solar / 0.25)
         
@@ -370,7 +343,7 @@ for ec in ALL_EARTH_CANDIDATES:
         "Geological_Facies": ec["geological_facies"],
         "Lithology_Bedrock": ec["lithology"],
         "Scientific_Significance": ec["scientific_significance"],
-        "Planetary_Environmental_Caveats": f"Gravity is 1.0g on Earth vs {0.166 if best_target['body'] == 'Moon' else 0.38}g on target body; surface experiences 1 atm air pressure vs {'vacuum' if best_target['body'] == 'Moon' else '0.6 kPa thin CO2'}. Radiation shielding requires lab simulation."
+        "Planetary_Environmental_Caveats": f"Gravity is 1.0g on Earth vs 0.166g on the Moon; surface experiences 1 atm air pressure vs hard vacuum. Direct vacuum & radiation shielding testing requires chamber simulation."
     })
 
 # Convert to DataFrame
@@ -379,11 +352,11 @@ df_master = pd.DataFrame(master_rows)
 df_master = df_master.drop_duplicates(subset=["Candidate_ID"])
 df_master = df_master.sort_values(by="Total_Match_Score_Pct", ascending=False)
 
-# Save master deliverable CSV
+# Save deliverables
+print("[4/4] Writing master deliverables to outputs/...")
 master_csv_path = "outputs/final_terrestrial_planetary_analogs_master.csv"
 df_master.to_csv(master_csv_path, index=False, encoding="utf-8")
 
-# Also update new_candidate_analogs.csv
 new_candidates_csv_path = "outputs/new_candidate_analogs.csv"
 df_master.to_csv(new_candidates_csv_path, index=False, encoding="utf-8")
 

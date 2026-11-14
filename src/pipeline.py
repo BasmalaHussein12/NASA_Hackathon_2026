@@ -9,14 +9,15 @@ and global high-relief benchmark analogs.
 
 import os
 import json
+from typing import List, Dict, Any, Optional
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.preprocessing import LunarDEMIngestor, EarthSRTMIngestor
+from src.preprocessing import LunarDEMIngestor, EarthSRTMIngestor, EarthMultiSRTMIngestor
 from src.features import extract_topological_feature_vector
 from src.matching import TopologicalMatcher, FEATURE_COLUMNS, calculate_composite_ptsi, calculate_cosine_similarity, calculate_mahalanobis_distance
-from src.validation import TERRESTRIAL_ANALOG_REGISTRY, evaluate_scientific_viability
+from src.validation import get_terrestrial_registry, evaluate_scientific_viability
 
 # Candidate permanent lunar base sites (Artemis Landing Candidates + Mare / Lava Tube nodes)
 LUNAR_BASE_CANDIDATES = [
@@ -82,18 +83,18 @@ LUNAR_BASE_CANDIDATES = [
 class PlanetaryAnalogPipeline:
     def __init__(
         self,
-        earth_hgt_path: str = "Data/Earth_Data/s01w047.hgt",
+        earth_data_dir: str = "Data/Earth_Data",
         moon_dem_path: str = "Data/Moon_Data/ldem_16_float.img",
         output_dir: str = "outputs"
     ):
-        self.earth_hgt_path = earth_hgt_path
+        self.earth_data_dir = earth_data_dir
         self.moon_dem_path = moon_dem_path
         self.output_dir = output_dir
         self.figures_dir = os.path.join(output_dir, "figures")
         os.makedirs(self.figures_dir, exist_ok=True)
         
         self.lunar_ingestor = LunarDEMIngestor(moon_dem_path)
-        self.earth_ingestor = EarthSRTMIngestor(earth_hgt_path)
+        self.earth_multi_ingestor = EarthMultiSRTMIngestor(earth_data_dir)
         self.matcher = TopologicalMatcher()
         
         self.lunar_df = None
@@ -132,15 +133,30 @@ class PlanetaryAnalogPipeline:
         return self.lunar_df
 
     def process_earth_analogs(self) -> pd.DataFrame:
-        """Processes both local Earth DEM patches and global benchmark analog catalog."""
-        print("[2/5] Ingesting Earth EDM (s01w047.hgt) and extracting localized candidate patches...")
+        """Processes ALL NASA Earth SRTM HGT tiles in Data/Earth_Data:
+        1. Known geological analog sites (Egypt, Arizona, Labrador, Hawaii) with exact DEM patches.
+        2. Non-overlapping spatial scan patches from s01w047.hgt (Pará coastal plain).
+        """
+        print("[2/5] Ingesting Earth EDMs from Data/Earth_Data and computing 100% DEM-derived features...")
         earth_records = []
         
-        # 1. Process provided local SRTM tile (Pará coastal plain / land patches)
-        try:
-            self.earth_ingestor.load()
-            local_patches = self.earth_ingestor.extract_patches(
-                patch_dim_pixels=300, stride_pixels=150, min_land_fraction=0.6
+        # 1. Ground-truthed reference sites computed directly from corresponding HGT tiles
+        registry = get_terrestrial_registry(self.earth_data_dir)
+        for key, info in registry.items():
+            earth_records.append({
+                "site_name": key,
+                "discovery_source": f"NASA SRTM EDM Discovery ({info.get('dem_source_tile', 'HGT')})",
+                **info
+            })
+            
+        # 2. Add non-overlapping spatial scan patches from s01w047.hgt (Pará coastal plain)
+        para_tile_path = os.path.join(self.earth_data_dir, "s01w047.hgt")
+        local_patches = []
+        if os.path.exists(para_tile_path):
+            para_ing = EarthSRTMIngestor(para_tile_path, base_lat=-1.0, base_lon=-47.0)
+            para_ing.load()
+            local_patches = para_ing.extract_patches(
+                patch_dim_pixels=300, stride_pixels=300, min_land_fraction=0.7
             )
             for idx, p in enumerate(local_patches):
                 feat = extract_topological_feature_vector(
@@ -148,7 +164,7 @@ class PlanetaryAnalogPipeline:
                 )
                 earth_records.append({
                     "site_name": f"Para_Coastal_Plain_Patch_{idx+1}",
-                    "formal_name": f"Pará Amazonian Coastal Plain (Patch {idx+1})",
+                    "formal_name": f"Pará Amazonian Coastal Plain (Grid Block {idx+1})",
                     "country": "Brazil",
                     "center_lat": p["center_lat"],
                     "center_lon": p["center_lon"],
@@ -160,19 +176,9 @@ class PlanetaryAnalogPipeline:
                     "scientific_viability": "Provides landing zone terrain analog for flat lunar mare surfaces.",
                     **feat
                 })
-        except Exception as e:
-            print(f"      Warning loading local SRTM: {e}")
-
-        # 2. Add global validated benchmark analogs
-        for key, info in TERRESTRIAL_ANALOG_REGISTRY.items():
-            earth_records.append({
-                "site_name": key,
-                "discovery_source": "Global Geological Benchmark",
-                **info
-            })
             
         self.earth_df = pd.DataFrame(earth_records)
-        print(f"      Compiled {len(self.earth_df)} total terrestrial analog candidates ({len(local_patches)} directly from s01w047.hgt).")
+        print(f"      Compiled {len(self.earth_df)} total terrestrial analog candidates ({len(registry)} verified sites + {len(local_patches)} from s01w047.hgt).")
         return self.earth_df
 
     def run_matching(self) -> List[Dict[str, Any]]:

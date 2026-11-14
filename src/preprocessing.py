@@ -6,9 +6,11 @@ High-performance implementation with patch-level localized filtering.
 """
 
 import os
+import glob
+import re
 import numpy as np
 from scipy import ndimage
-from typing import Tuple, Dict, Any, Optional
+from typing import Tuple, Dict, Any, Optional, List
 
 # Physical planetary reference radii (SI meters)
 RADIUS_EARTH_METERS = 6378137.0
@@ -117,15 +119,28 @@ class LunarDEMIngestor:
         }
 
 
+def parse_srtm_filename(file_path: str) -> Tuple[float, float]:
+    """Parses base latitude and longitude from standard SRTM HGT filename (e.g. n28e028.hgt -> (28.0, 28.0))."""
+    base = os.path.basename(file_path).lower()
+    m = re.match(r"([ns])(\d+)([ew])(\d+)", base)
+    if not m:
+        return -1.0, -47.0
+    ns, lat_str, ew, lon_str = m.groups()
+    lat = float(int(lat_str) * (-1 if ns == "s" else 1))
+    lon = float(int(lon_str) * (-1 if ew == "w" else 1))
+    return lat, lon
+
+
 class EarthSRTMIngestor:
     """
     Ingests and preprocesses Earth Shuttle Radar Topography Mission (SRTM) DEMs.
     Standard product: 1-arc-second HGT (3601 x 3601 pixels, int16 big-endian).
     """
-    def __init__(self, file_path: str, base_lat: float = -1.0, base_lon: float = -47.0):
+    def __init__(self, file_path: str, base_lat: Optional[float] = None, base_lon: Optional[float] = None):
         self.file_path = file_path
-        self.base_lat = base_lat
-        self.base_lon = base_lon
+        parsed_lat, parsed_lon = parse_srtm_filename(file_path)
+        self.base_lat = parsed_lat if base_lat is None else base_lat
+        self.base_lon = parsed_lon if base_lon is None else base_lon
         self.dem_meters = None
 
     def load(self) -> np.ndarray:
@@ -143,6 +158,59 @@ class EarthSRTMIngestor:
             
         self.dem_meters = grid
         return self.dem_meters
+
+    def extract_patch_at_coords(
+        self, lat: float, lon: float, radius_km: float = 3.0, smooth_sigma: float = 0.5
+    ) -> Dict[str, Any]:
+        """
+        Extracts a localized sub-grid centered at (lat, lon) with radius_km from this tile.
+        Handles void replacement and artifact smoothing.
+        """
+        if self.dem_meters is None:
+            self.load()
+            
+        n_rows, n_cols = self.dem_meters.shape
+        ppd = n_rows - 1  # 3600 for 1-arc-second
+        
+        r_center = int(round(((self.base_lat + 1.0) - lat) * ppd))
+        c_center = int(round((lon - self.base_lon) * ppd))
+        
+        dy, dx = calculate_metric_cell_size(lat, ppd, planet="earth")
+        half_r = max(4, int(round((radius_km * 1000.0) / dy)))
+        half_c = max(4, int(round((radius_km * 1000.0) / dx)))
+        
+        r_min = max(0, r_center - half_r)
+        r_max = min(n_rows, r_center + half_r + 1)
+        c_min = max(0, c_center - half_c)
+        c_max = min(n_cols, c_center + half_c + 1)
+        
+        patch = self.dem_meters[r_min:r_max, c_min:c_max].copy()
+        
+        # Handle localized void values
+        void_mask = (patch <= -500) | (patch == -32768)
+        if np.any(void_mask):
+            valid_vals = patch[~void_mask]
+            valid_mean = float(np.mean(valid_vals)) if len(valid_vals) > 0 else 0.0
+            patch[void_mask] = valid_mean
+            
+        if smooth_sigma > 0 and patch.size > 9:
+            patch = ndimage.gaussian_filter(patch, sigma=smooth_sigma)
+            
+        min_lat = (self.base_lat + 1.0) - (r_max / ppd)
+        max_lat = (self.base_lat + 1.0) - (r_min / ppd)
+        min_lon = self.base_lon + (c_min / ppd)
+        max_lon = self.base_lon + (c_max / ppd)
+        
+        return {
+            "patch": patch,
+            "center_lat": float(lat),
+            "center_lon": float(lon),
+            "dy_meters": dy,
+            "dx_meters": dx,
+            "bbox": [float(min_lat), float(min_lon), float(max_lat), float(max_lon)],
+            "planet": "Earth",
+            "source": os.path.basename(self.file_path)
+        }
 
     def extract_patches(
         self, patch_dim_pixels: int = 300, stride_pixels: int = 150, min_land_fraction: float = 0.6, smooth_sigma: float = 0.5
@@ -198,7 +266,63 @@ class EarthSRTMIngestor:
                     "dx_meters": dx,
                     "bbox": [float(min_lat), float(min_lon), float(max_lat), float(max_lon)],
                     "planet": "Earth",
-                    "source": "SRTM_s01w047"
+                    "source": os.path.basename(self.file_path)
                 })
                 
         return patches
+
+
+class EarthMultiSRTMIngestor:
+    """
+    Ingests and indexes multiple SRTM HGT tiles in a directory (e.g. Data/Earth_Data).
+    Routes coordinate queries to the matching tile and caches loaded DEM matrices.
+    """
+    def __init__(self, data_dir: str = "Data/Earth_Data"):
+        self.data_dir = data_dir
+        self.tile_index: Dict[Tuple[int, int], str] = {}
+        self.loaded_ingestors: Dict[str, EarthSRTMIngestor] = {}
+        self._scan_directory()
+
+    def _scan_directory(self):
+        pattern = os.path.join(self.data_dir, "*.hgt")
+        files = glob.glob(pattern)
+        for f in files:
+            lat, lon = parse_srtm_filename(f)
+            self.tile_index[(int(lat), int(lon))] = f
+
+    def get_ingestor_for_coords(self, lat: float, lon: float) -> Optional[EarthSRTMIngestor]:
+        base_lat = int(np.floor(lat))
+        base_lon = int(np.floor(lon))
+        file_path = self.tile_index.get((base_lat, base_lon))
+        if not file_path:
+            return None
+        if file_path not in self.loaded_ingestors:
+            ingestor = EarthSRTMIngestor(file_path, base_lat=float(base_lat), base_lon=float(base_lon))
+            ingestor.load()
+            self.loaded_ingestors[file_path] = ingestor
+        return self.loaded_ingestors[file_path]
+
+    def extract_patch(self, lat: float, lon: float, radius_km: float = 3.0) -> Optional[Dict[str, Any]]:
+        ingestor = self.get_ingestor_for_coords(lat, lon)
+        if ingestor is None:
+            return None
+        return ingestor.extract_patch_at_coords(lat, lon, radius_km=radius_km)
+
+    def extract_all_discovered_patches(
+        self, patch_dim_pixels: int = 300, stride_pixels: int = 300, min_land_fraction: float = 0.7
+    ) -> List[Dict[str, Any]]:
+        all_patches = []
+        for (blat, blon), fpath in sorted(self.tile_index.items()):
+            if fpath not in self.loaded_ingestors:
+                ing = EarthSRTMIngestor(fpath, base_lat=float(blat), base_lon=float(blon))
+                ing.load()
+                self.loaded_ingestors[fpath] = ing
+            else:
+                ing = self.loaded_ingestors[fpath]
+            patches = ing.extract_patches(
+                patch_dim_pixels=patch_dim_pixels,
+                stride_pixels=stride_pixels,
+                min_land_fraction=min_land_fraction
+            )
+            all_patches.extend(patches)
+        return all_patches
