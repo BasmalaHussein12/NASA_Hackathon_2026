@@ -257,3 +257,17 @@ This pipeline cross-references candidates with operational NASA and ESA terrestr
 
 ---
 *Developed for the NASA Space Apps Challenge 2026. Code and documentation released under the MIT License.*
+
+## Contributors
+
+Developed by a multidisciplinary team from **Alexandria University, Faculty of Science, Software Industry and Multimedia Department**, working across AI, data analysis, and web development.
+
+### Analysis & AI Team
+- Jana Hamdy
+- Mariam Isaac
+- Basmala Hussein
+
+### Web Development Team
+- Salma Hany
+- Roaa Haitham
+- Habiba Hossam
