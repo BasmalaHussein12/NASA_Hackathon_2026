@@ -1,0 +1,765 @@
+/* =========================
+   GENERAL SETTINGS
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #050b16;
+  color: white;
+}
+
+/* =========================
+   NAVIGATION BAR
+========================= */
+
+.navbar {
+  width: 100%;
+  height: 82px;
+  padding: 0 6%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  background: rgba(5, 11, 22, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  backdrop-filter: blur(10px);
+}
+
+/* LOGO */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: white;
+  text-decoration: none;
+
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  color: #60a5fa;
+}
+
+.logo-highlight {
+  color: #60a5fa;
+}
+
+/* NAVIGATION LINKS */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: #cbd5e1;
+  text-decoration: none;
+
+  font-size: 15px;
+  transition: color 0.3s ease;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-link:hover {
+  color: #60a5fa;
+}
+
+.nav-link.active {
+  color: #60a5fa;
+  font-weight: bold;
+}
+
+/* =========================
+   PROFILE DROPDOWN
+========================= */
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.profile-chevron {
+  font-size: 13px;
+  transition: transform 0.3s ease;
+}
+
+.profile-link[aria-expanded="true"] .profile-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Box */
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 18px);
+  right: 0;
+
+  width: 270px;
+  padding: 18px;
+
+  background: rgba(8, 18, 35, 0.97);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 12px;
+
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+
+  backdrop-filter: blur(15px);
+  z-index: 20;
+
+  animation: dropdownFade 0.25s ease;
+}
+
+/* Hide Dropdown */
+
+.profile-dropdown[hidden] {
+  display: none;
+}
+
+/* Dropdown Animation */
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Profile Header */
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  border-radius: 50%;
+
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.profile-header h3 {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.profile-header p {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Divider */
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 15px 0;
+}
+
+/* Welcome Message */
+
+.profile-message {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #cbd5e1;
+  margin-bottom: 15px;
+}
+
+/* Explore Action */
+
+.profile-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 11px 13px;
+
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 7px;
+
+  color: #60a5fa;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  transition: background 0.3s ease;
+}
+
+.profile-action:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero {
+  width: 100%;
+  min-height: 100vh;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  padding: 130px 10% 100px;
+
+  background: #030914;
+
+  overflow: hidden;
+}
+
+/* =========================
+   3D EARTH GLOBE
+========================= */
+
+.planet-container {
+  position: absolute;
+
+  width: 680px;
+  height: 680px;
+
+  right: 1%;
+  top: 54%;
+
+  transform: translateY(-50%);
+
+  z-index: 0;
+  pointer-events: none;
+}
+
+#earth-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================
+   DARK GRADIENT OVERLAY
+========================= */
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    rgba(3, 9, 20, 0.98) 0%,
+    rgba(3, 9, 20, 0.9) 28%,
+    rgba(3, 9, 20, 0.55) 48%,
+    rgba(3, 9, 20, 0.12) 72%,
+    rgba(3, 9, 20, 0.02) 100%
+  );
+}
+
+/* =========================
+   HERO CONTENT
+========================= */
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+
+  max-width: 650px;
+}
+
+.hero-label {
+  color: #60a5fa;
+
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 3px;
+
+  margin-bottom: 25px;
+}
+
+.hero-content h1 {
+  font-size: clamp(45px, 6vw, 72px);
+  line-height: 1.15;
+
+  margin-bottom: 25px;
+}
+
+.hero-content h1 span {
+  color: #60a5fa;
+}
+
+.hero-description {
+  max-width: 510px;
+
+  color: #cbd5e1;
+
+  font-size: 17px;
+  line-height: 1.8;
+
+  margin-bottom: 35px;
+}
+
+/* =========================
+   START EXPLORING BUTTON
+========================= */
+
+.explore-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  padding: 16px 27px;
+
+  background: #2563eb;
+  color: white;
+
+  border-radius: 6px;
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+.explore-btn:hover {
+  background: #3b82f6;
+  transform: translateY(-3px);
+
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+}
+
+.arrow {
+  font-size: 20px;
+}
+
+/* =========================
+   BOTTOM TEXT
+========================= */
+
+.hero-bottom {
+  position: absolute;
+  bottom: 25px;
+  left: 6%;
+  right: 6%;
+
+  display: flex;
+  justify-content: space-between;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+  letter-spacing: 2px;
+
+  z-index: 2;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 70px;
+    padding: 0 5%;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+  .logo-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+  }
+
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .hero {
+    padding: 120px 7% 90px;
+  }
+
+  .planet-container {
+    width: 380px;
+    height: 380px;
+
+    right: -130px;
+    top: 50%;
+
+    opacity: 0.75;
+  }
+
+  .hero-content h1 {
+    font-size: 43px;
+  }
+
+  .hero-description {
+    font-size: 15px;
+  }
+
+  .hero-bottom {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+}
+
+/* =========================
+   SMALL SCREENS
+========================= */
+
+@media (max-width: 450px) {
+  .nav-link {
+    font-size: 0;
+  }
+
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .hero-content h1 {
+    font-size: 38px;
+  }
+
+  .hero-bottom {
+    gap: 10px;
+  }
+
+  .profile-dropdown {
+    right: -5px;
+    width: 250px;
+  }
+
+  .profile-chevron {
+    display: none;
+  }
+}
+
+/* =========================
+   EXPLORE PAGE
+========================= */
+
+.explore-page {
+  min-height: 100vh;
+  padding: 150px 8% 60px;
+
+  background: radial-gradient(
+      circle at 50% 20%,
+      rgba(37, 99, 235, 0.12),
+      transparent 45%
+    ),
+    #030914;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Heading */
+
+.explore-heading {
+  text-align: center;
+  max-width: 700px;
+  margin-bottom: 55px;
+}
+
+.explore-heading h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.explore-heading h1 span {
+  color: #60a5fa;
+}
+
+.explore-heading > p:last-child {
+  color: #94a3b8;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Destination Cards */
+
+.destination-cards {
+  width: 100%;
+  max-width: 950px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.destination-card {
+  padding: 0;
+  overflow: hidden;
+
+  text-align: left;
+  font-family: inherit;
+  color: white;
+
+  background: rgba(15, 27, 46, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-8px);
+  border-color: #60a5fa;
+
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.destination-card.selected {
+  border: 2px solid #60a5fa;
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.2);
+}
+
+/* Planet Visuals */
+
+.destination-visual {
+  height: 240px;
+  position: relative;
+  overflow: hidden;
+}
+
+.destination-visual::before {
+  content: "";
+  position: absolute;
+
+  width: 190px;
+  height: 190px;
+
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  box-shadow: inset -25px -15px 35px rgba(0, 0, 0, 0.5),
+    0 0 35px rgba(255, 255, 255, 0.08);
+}
+
+/* Moon */
+
+.moon-visual {
+  background: radial-gradient(circle at 50% 50%, #293449, #111c2d 65%, #08111f);
+}
+
+.moon-visual::before {
+  background: radial-gradient(
+    circle at 30% 30%,
+    #d6d6d6,
+    #858585 55%,
+    #555 100%
+  );
+
+  box-shadow: inset -25px -15px 35px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(180, 190, 210, 0.2);
+}
+
+/* Mars */
+
+.mars-visual {
+  background: radial-gradient(circle at 50% 50%, #42241f, #1b1722 65%, #08111f);
+}
+
+.mars-visual::before {
+  background: radial-gradient(
+    circle at 30% 30%,
+    #e99a70,
+    #a64f35 55%,
+    #713322 100%
+  );
+
+  box-shadow: inset -25px -15px 35px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(220, 100, 65, 0.2);
+}
+
+/* Card Information */
+
+.destination-info {
+  padding: 25px;
+}
+
+.destination-number {
+  color: #60a5fa;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.destination-info h2 {
+  font-size: 30px;
+  margin: 12px 0;
+}
+
+.destination-info p {
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 48px;
+}
+
+.destination-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 25px;
+  padding-top: 18px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  color: #60a5fa;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Selection Message */
+
+.destination-message {
+  margin-top: 30px;
+  color: #94a3b8;
+  font-size: 14px;
+  text-align: center;
+}
+
+.destination-message.active {
+  color: #60a5fa;
+}
+
+/* Back Home */
+
+.back-home {
+  margin-top: 30px;
+
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 13px;
+
+  transition: color 0.3s ease;
+}
+
+.back-home:hover {
+  color: #60a5fa;
+}
+
+/* Responsive */
+
+@media (max-width: 650px) {
+  .explore-page {
+    padding: 120px 6% 45px;
+  }
+
+  .destination-cards {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+
+  .destination-visual {
+    height: 210px;
+  }
+
+  .explore-heading {
+    margin-bottom: 35px;
+  }
+}
+
+/* 3D Moon */
+.moon-visual::before,
+.mars-visual::before {
+  display: none;
+}
+
+.moon-visual,
+.mars-visual {
+  position: relative;
+  overflow: hidden;
+}
+
+.moon-visual canvas,
+.mars-visual canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Coming soon card (Mars) - display only */
+.destination-card.coming-soon {
+  cursor: default;
+}
+
+.destination-card.coming-soon:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.destination-card.coming-soon .destination-action {
+  color: #94a3b8;
+  letter-spacing: 1px;
+}

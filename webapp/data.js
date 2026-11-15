@@ -349,7 +349,7 @@ const CATALOG_DATA = {
     },
     {
       "id": "EARTH_DISCOVERY_EG_01",
-      "name": "Bahariya Black Desert Volcanic Field (الصحراء السوداء)",
+      "name": "Bahariya Black Desert Volcanic Field",
       "country": "Egypt (Giza / New Valley)",
       "category": "NEW CANDIDATE DISCOVERY (Egypt Western Desert)",
       "is_new_discovery": true,
@@ -394,7 +394,7 @@ const CATALOG_DATA = {
         "geological_facies": "Conical Basalt Cinder Cones & Dolerite Apron",
         "lithology": "Doleritic basalt, ferruginous sandstone, volcanic tuff"
       },
-      "scientific_justification": "Pristine hyper-arid volcanic cone field. Conical dolerite mounds rising from flat desert aprons replicate the Marius Hills volcanic dome field on the Moon and Cerberus Fossae cones on Mars.",
+      "scientific_justification": "Pristine hyper-arid volcanic cone field. Conical dolerite mounds rising from flat desert aprons replicate the Marius Hills volcanic dome field on the Moon.",
       "environmental_caveats": "Gravity is 1.0g on Earth vs 0.166g on the Moon; surface experiences 1 atm air pressure vs hard vacuum. Direct vacuum & radiation shielding testing requires chamber simulation.",
       "satellite_imagery": {
         "esri_world_imagery": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -619,7 +619,7 @@ const CATALOG_DATA = {
     },
     {
       "id": "EARTH_DISCOVERY_EG_03",
-      "name": "Djara Stalactite Subsurface Cave (كهف الجارة)",
+      "name": "Djara Stalactite Subsurface Cave",
       "country": "Egypt (Asyut Plateau)",
       "category": "NEW CANDIDATE DISCOVERY (Egypt Western Desert)",
       "is_new_discovery": true,
@@ -781,7 +781,7 @@ const CATALOG_DATA = {
     },
     {
       "id": "EARTH_DISCOVERY_EG_02",
-      "name": "Gebel Qatrani Basalt Flows & Widan El-Faras (جبل قطراني)",
+      "name": "Gebel Qatrani Basalt Flows & Widan El-Faras",
       "country": "Egypt (Faiyum Depression)",
       "category": "NEW CANDIDATE DISCOVERY (Egypt Faiyum)",
       "is_new_discovery": true,
