@@ -66,18 +66,6 @@ body {
   gap: 1rem;
 }
 
-.nasa-logo-badge {
-  background: linear-gradient(135deg, var(--nasa-blue), #1e40af);
-  color: #fff;
-  font-weight: 900;
-  letter-spacing: 2px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  box-shadow: 0 0 15px rgba(11, 61, 145, 0.5);
-}
-
 .brand-title h1 {
   font-size: 1.15rem;
   font-weight: 700;
@@ -196,7 +184,7 @@ body {
 /* Planet Toggle Buttons */
 .planet-selector-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0.5rem;
   margin-bottom: 0.85rem;
 }

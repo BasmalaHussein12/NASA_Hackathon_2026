@@ -1,10 +1,3 @@
-/**
- * NASA Space Apps Challenge 2026
- * Terrestrial-Lunar Topological Discovery Engine (TL-TDE)
- * Core Application Logic & Interactive Controller
- */
-
-// Application State
 const state = {
   activePlanet: 'Moon',
   activeTargetId: 'MOON_MTP',
@@ -28,7 +21,6 @@ const state = {
 // DOM References
 const elements = {
   planetMoonBtn: document.getElementById('planetMoonBtn'),
-  planetMarsBtn: document.getElementById('planetMarsBtn'),
   targetSelect: document.getElementById('targetSelect'),
   targetPreviewTitle: document.getElementById('targetPreviewTitle'),
   targetPreviewDesc: document.getElementById('targetPreviewDesc'),
@@ -247,15 +239,6 @@ function attachEventListeners() {
   elements.planetMoonBtn.addEventListener('click', () => {
     state.activePlanet = 'Moon';
     elements.planetMoonBtn.classList.add('active');
-    elements.planetMarsBtn.classList.remove('active');
-    populateTargetSelect();
-    render();
-  });
-
-  elements.planetMarsBtn.addEventListener('click', () => {
-    state.activePlanet = 'Mars';
-    elements.planetMarsBtn.classList.add('active');
-    elements.planetMoonBtn.classList.remove('active');
     populateTargetSelect();
     render();
   });

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore | SpaceMirror</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <a href="index.html" class="logo">
+        <svg
+          class="logo-icon"
+          viewBox="0 0 50 50"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="25"
+            cy="25"
+            r="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <ellipse
+            cx="25"
+            cy="25"
+            rx="23"
+            ry="9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            transform="rotate(-25 25 25)"
+          />
+          <circle cx="25" cy="25" r="4" fill="currentColor" />
+        </svg>
+
+        <span>Space<span class="logo-highlight">Mirror</span></span>
+      </a>
+
+      <nav class="nav-links">
+        <!-- Home -->
+        <a href="index.html" class="nav-link active">
+          <svg
+            viewBox="0 0 24 24"
+            class="nav-icon"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 10.5L12 3L21 10.5V21H14V14H10V21H3V10.5Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Home
+        </a>
+
+        <!-- Profile Dropdown -->
+        <div class="profile-menu">
+          <button
+            type="button"
+            class="nav-link profile-link"
+            id="profile-toggle"
+            aria-expanded="false"
+            aria-controls="profile-dropdown"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              class="nav-icon"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="8"
+                r="4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+              <path
+                d="M4 21C4 16.6 7.6 14 12 14C16.4 14 20 16.6 20 21"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+
+            Profile
+            <span class="profile-chevron">⌄</span>
+          </button>
+
+          <div class="profile-dropdown" id="profile-dropdown" hidden>
+            <div class="profile-header">
+              <div class="profile-avatar">S</div>
+              <div>
+                <h3>Guest Visitor</h3>
+                <p>Exploring SpaceMirror</p>
+              </div>
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <p class="profile-message">
+              Welcome to SpaceMirror! You're currently browsing as a guest.
+            </p>
+
+            <a href="explore.html" class="profile-action">
+              Start Exploring
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Explore Section -->
+    <main class="explore-page">
+      <div class="explore-heading">
+        <p class="hero-label">BEGIN YOUR JOURNEY</p>
+
+        <h1>Where do you want to <span>explore?</span></h1>
+
+        <p>
+          Choose your destination and discover Earth locations that resemble
+          extraterrestrial environments.
+        </p>
+      </div>
+
+      <!-- Destination Cards -->
+      <div class="destination-cards">
+        <!-- Moon Card -->
+        <button
+          class="destination-card moon-card"
+          type="button"
+          data-destination="Moon"
+        >
+          <div class="destination-visual moon-visual">
+            <canvas id="moon-canvas"></canvas>
+          </div>
+
+          <div class="destination-info">
+            <span class="destination-number">01 / DESTINATION</span>
+            <h2>Moon</h2>
+
+            <p>
+              Explore lunar landscapes, surface features and their Earth
+              analogs.
+            </p>
+
+            <span class="destination-action"> Select Moon <span>→</span> </span>
+          </div>
+        </button>
+
+        <!-- Mars Card (coming soon - not clickable) -->
+        <div
+          class="destination-card mars-card coming-soon"
+          aria-disabled="true"
+        >
+          <div class="destination-visual mars-visual">
+            <canvas id="mars-canvas"></canvas>
+          </div>
+
+          <div class="destination-info">
+            <span class="destination-number">02 / DESTINATION</span>
+            <h2>Mars</h2>
+
+            <p>
+              Discover Martian terrain and find similar environments on Earth.
+            </p>
+
+            <span class="destination-action"> Coming Soon </span>
+          </div>
+        </div>
+      </div>
+
+      <p class="destination-message" id="destination-message">
+        Select a destination to begin your exploration.
+      </p>
+
+      <a href="index.html" class="back-home">← Back to Home</a>
+    </main>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

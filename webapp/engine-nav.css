@@ -1,0 +1,89 @@
+/* Glue between the shared navbar and the engine layout */
+
+/* navbar sits in the normal flow above the mission header */
+.navbar {
+  position: relative;
+  flex-shrink: 0;
+  height: 70px;
+  z-index: 2000;            /* profile dropdown must overlay map + header */
+  background: rgba(5, 11, 22, 0.92);
+}
+
+.header-bar { flex-shrink: 0; }
+
+/* take whatever height is left under navbar + header */
+.main-layout {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
+/* ================= RESIZABLE SIDEBAR ================= */
+.sidebar-panel {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--sidebar-width) - 5px);
+  width: 10px;
+  z-index: 600;
+  cursor: ew-resize;          /* the left/right arrow cursor */
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+/* thin highlighted line on the edge */
+.sidebar-resizer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+/* little grip in the middle */
+.resizer-grip {
+  position: relative;
+  width: 6px;
+  height: 44px;
+  border-radius: 4px;
+  background: #334155;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.sidebar-resizer:hover::before,
+.sidebar-resizer:focus-visible::before,
+.sidebar-resizer.dragging::before {
+  background: var(--nasa-cyan);
+}
+
+.sidebar-resizer:hover .resizer-grip,
+.sidebar-resizer:focus-visible .resizer-grip,
+.sidebar-resizer.dragging .resizer-grip {
+  opacity: 1;
+  background: var(--nasa-cyan);
+}
+
+/* while dragging: keep the arrow cursor everywhere, no text selection */
+body.is-resizing,
+body.is-resizing * {
+  cursor: ew-resize !important;
+  user-select: none !important;
+}
+
+@media (max-width: 960px) {
+  .sidebar-resizer { display: none; }
+  .sidebar-panel { width: 100%; }
+}
