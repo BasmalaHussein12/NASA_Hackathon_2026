@@ -7,6 +7,43 @@
 
 > **Objective:** Discover, characterize, and validate terrestrial analog sites on Earth that closely match the topography of permanent Moon base candidate locations using Elevation Data Models (EDMs), geomorphological feature extraction, and multi-objective Machine Learning topological similarity matching.
 
+## Website Preview
+
+### 1. Home Page
+The landing page of Space Mirror, introducing the platform and its mission.
+
+![Home Page](screenshots/Screenshot%202026-11-16%20195059.png)
+
+### 2. User Profile
+The home page after clicking the profile icon.
+
+![User Profile](screenshots/Screenshot%202026-11-16%20195242.png)
+
+### 3. Choose Your Planetary Target
+Explore planetary bodies and select between the Moon and Mars.
+
+![Moon or Mars](screenshots/Screenshot%202026-11-16%20195301.png)
+
+### 4. Planetary Analog Search Engine
+Use the search engine to discover terrestrial analog locations based on planetary characteristics.
+
+![Search Engine](screenshots/Screenshot%202026-11-16%20195320.png)
+
+### 5. Explore Features and Interactive Map
+Explore the platform's features and interact with the map to discover potential planetary analog sites.
+
+![Features and Map](screenshots/Screenshot%202026-11-16%20195350.png)
+
+### 6. Mission Dossier
+View the Mission Dossier to explore detailed information about a selected location.
+
+![Mission Dossier](screenshots/Screenshot%202026-11-16%20195421.png)
+
+### 7. Discovering Terrestrial Analogs in Egypt
+Three locations in Egypt were identified as potential terrestrial analogs for planetary exploration.
+
+![Discovered Locations in Egypt](screenshots/Screenshot%202026-11-16%20195513.png)
+
 ---
 
 ## 📑 Table of Contents
